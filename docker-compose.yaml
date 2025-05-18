@@ -77,6 +77,20 @@ services:
     depends_on:
       - rabbitmq
 
+  localstack:
+    container_name: aws-localstack
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+      - "9090:9090"
+    environment:
+      - SERVICES=s3
+      - AWS_DEFAULT_REGION=eu-central-1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
 networks:
   default:
     driver: bridge

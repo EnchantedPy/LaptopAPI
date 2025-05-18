@@ -2,6 +2,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, field_validator
 from typing import Any, Dict, Union
 import json
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent.parent
 
 
 class AppSettings(BaseSettings):
@@ -29,16 +32,6 @@ class AppSettings(BaseSettings):
     postgres_name: str = Field(..., env="postgres_name")
     postgres_password: str = Field(..., env="postgres_password")
     postgres_user: str = Field(..., env="postgres_user")
-    
-    mongo_name: str = Field(..., env="mongo_name")
-    mongo_user: str = Field(..., env="mongo_user")
-    mongo_password: str = Field(..., env="mongo_password")
-    mongo_host: str = Field(..., env="mongo_host")
-    mongo_port: int = Field(..., env="mongo_port")
-    
-    @property
-    def mongo_url(self) -> str:
-        return f"mongodb://{self.mongo_user}:{self.mongo_password}@{self.mongo_host}:{self.mongo_port}/{self.mongo_name}"
 
     admin_username: str = Field(..., env="admin_username")
     admin_password: str = Field(..., env="admin_password")
@@ -46,6 +39,15 @@ class AppSettings(BaseSettings):
     jwt_secret_key: str = Field(..., env="jwt_secret_key")
     jwt_cookie_name: str = Field(..., env="jwt_cookie_name")
     jwt_secure: bool = Field(..., env="jwt_secure")
+    jwt_algorithm: str = Field(..., env="jwt_algorithm")
+    
+    @property
+    def jwt_private_key_path():
+        return BASE_DIR / "certs" / "jwt-private.pem"
+    
+    @property
+    def jwt_public_key_path():
+        return BASE_DIR / "certs" / "jwt-public.pem"
 
     redis_url: str = Field(..., env="redis_url")
     redis_host: str = Field(..., env="redis_host")
