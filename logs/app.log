@@ -1,0 +1,19 @@
+2025-05-11 16:29:48	Logger	INFO	main.py:42	search users id: <class 'int'>
+2025-05-11 16:29:48	Logger	INFO	UserService.py:26	<src.models.sql_models.UserModel object at 0x00000215B6295790>
+2025-05-11 16:31:05	Logger	INFO	main.py:48	search users name: <class 'str'>
+2025-05-11 21:36:41	Logger	ERROR	UnitOfWork.py:75	Unexdected error in SQLAUoW: None
+2025-05-11 21:38:16	Logger	ERROR	UnitOfWork.py:75	Unexdected error in SQLAUoW: (sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $3: datetime.datetime(2025, 5, 11, 18, 38, 1... (can't subtract offset-naive and offset-aware datetimes)
+[SQL: INSERT INTO user_activity (user_id, action, timestamp, detail) VALUES ($1::INTEGER, $2::VARCHAR, $3::TIMESTAMP WITHOUT TIME ZONE, $4::VARCHAR) RETURNING user_activity.id]
+[parameters: (1, 'string', datetime.datetime(2025, 5, 11, 18, 38, 12, 907000, tzinfo=TzInfo(UTC)), 'string')]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2025-05-11 21:43:38	Logger	ERROR	PostgresRepository.py:26	Unexdected error in delete: unsupported operand type(s) for &: 'Select' and 'BinaryExpression'
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	1. info logged
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	2. info logged
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	3. info logged
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	4. info logged
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	5. info logged
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	6. info logged
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	7. info logged
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	8. info logged
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	9. info logged
+2025-05-17 08:56:00	Logger	INFO	tasks.py:7	10. info logged

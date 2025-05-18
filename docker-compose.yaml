@@ -1,0 +1,88 @@
+services:
+  app:
+    build: .
+    image: app-image
+    container_name: app-container
+    command: ["python", "main.py"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - postgres_db
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - default
+
+  postgres_db:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${postgres_name}
+      POSTGRES_USER: ${postgres_user}
+      POSTGRES_PASSWORD: ${postgres_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - default
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${rmq_user}
+      RABBITMQ_DEFAULT_PASS: ${rmq_password}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - default
+
+  celery:
+    image: app-image
+    container_name: celery
+    command: ["celery", "-A", "workers.worker", "worker", "-l", "info"]
+    volumes:
+      - .:/app
+    depends_on:
+      - app
+      - rabbitmq
+
+  flower:
+    image: app-image
+    command:
+      ["celery", "-A", "workers.worker", "flower", "--basicauth=admin:password"]
+    ports:
+      - "5555:5555"
+    depends_on:
+      - rabbitmq
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  rabbitmq-data:
+  celery:
+  redis_data:
