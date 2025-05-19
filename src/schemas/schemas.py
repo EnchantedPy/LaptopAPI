@@ -49,8 +49,3 @@ class UserActivityAddSchema(BaseModel):
 class UserActivityDeleteSchema(BaseModel):
 	user_id: int
 	activity_id: int
-
-
-class TokenInfo(BaseModel):
-	token: str
-	token_type: str

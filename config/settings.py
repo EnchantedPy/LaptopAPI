@@ -40,6 +40,8 @@ class AppSettings(BaseSettings):
     jwt_cookie_name: str = Field(..., env="jwt_cookie_name")
     jwt_secure: bool = Field(..., env="jwt_secure")
     jwt_algorithm: str = Field(..., env="jwt_algorithm")
+    access_token_expire_minutes: int = Field(..., env="access_token_expire_minutes")
+    refresh_token_expire_minutes: int = Field(..., env="refresh_token_expire_minutes")
     
     @property
     def jwt_private_key_path():

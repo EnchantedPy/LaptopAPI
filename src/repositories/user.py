@@ -1,5 +1,5 @@
 from src.utils.PostgresRepository import UserPostgresRepository
-from src.models.sql_models import UserModel
+from models.models import UserModel
 
 class UserRepository(UserPostgresRepository):
 	model = UserModel

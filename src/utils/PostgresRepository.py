@@ -3,13 +3,13 @@ from src.interfaces.AbstractDatabase import DatabaseInterface
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from functools import singledispatchmethod
-from src.models.sql_models import UserModel, LaptopTemplateModel, UserActivityModel
+from models.models import UserModel, LaptopTemplateModel, UserActivityModel
 from src.schemas.schemas import LaptopAddSchema, LaptopDeleteSchema, LaptopUpdateSchema, UserAddSchema, \
     UserDeleteSchema, UserUpdateSchema, UserActivityAddSchema, UserActivityDeleteSchema
 from sqlalchemy.exc import SQLAlchemyError
 from functools import wraps
 from src.utils.logger import logger
-from src.models.sql_models import Base
+from models.models import Base
 from datetime import datetime
 
 

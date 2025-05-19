@@ -3,7 +3,7 @@ from typing import List
 from src.utils.logger import logger
 from src.utils.UnitOfWork import SQLAlchemyUoW
 from src.schemas.schemas import UserActivityAddSchema, UserActivityDeleteSchema
-from src.models.sql_models import UserActivityModel
+from models.models import UserActivityModel
 
 class UserActivityService:
     async def add(self, uow: SQLAlchemyUoW, data: UserActivityAddSchema) -> None:

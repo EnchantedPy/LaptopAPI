@@ -16,6 +16,7 @@ class UserModel(Base):
     name: Mapped[str]
     password: Mapped[str]
     email: Mapped[str] = mapped_column(String, unique=True)
+    active: Mapped[bool]
     laptop_templates: Mapped[list['LaptopTemplateModel']] = relationship('LaptopTemplateModel', back_populates='user')
     user_activity: Mapped[list['UserActivityModel']] = relationship('UserActivityModel', back_populates='user')
     
