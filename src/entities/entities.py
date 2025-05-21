@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Optional
+import uuid
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
@@ -29,6 +30,7 @@ class UserActivity(BaseModel):
 
 class User(BaseModel):
        id: int
+       username: str
        name: str
        hashed_password: bytes
        email: EmailStr
@@ -38,3 +40,13 @@ class User(BaseModel):
        
        class Config:
         from_attributes = True
+        
+
+class TokenPayload(BaseModel):
+    sub: int
+    name: Optional[str]
+    email: Optional[EmailStr]
+    role: str
+    exp: int
+    iat: int
+    jti: uuid.UUID

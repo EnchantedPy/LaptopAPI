@@ -1,4 +1,4 @@
-from typing import Any, Type
+from typing import Any, List, Optional, Type
 from src.interfaces.AbstractDatabase import DatabaseInterface
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,6 +11,8 @@ from functools import wraps
 from src.utils.logger import logger
 from src.models.models import Base
 from datetime import datetime
+from src.entities.entities import User
+from sqlalchemy.orm import joinedload
 
 
 def handle_exc(func):
@@ -34,29 +36,63 @@ class UserPostgresRepository(DatabaseInterface):
         self._session = _session
 
     @handle_exc
-    async def get_by_name(self, value: str) -> list[UserModel]:
-        query = select(self.model).where(self.model.name == value)
+    async def get_by_name(self, value: str) -> Optional[User]:
+        query = (
+            select(self.model)
+            .where(self.model.name == value)
+            .options(
+                joinedload(self.model.laptop_templates),
+                joinedload(self.model.user_activity)
+            )
+        )
         result = await self._session.execute(query)
-        return result.scalars().all()
+        db_user = result.scalars().unique().first()
+
+        if db_user:
+            return User.model_validate(db_user)
+        return None
 
     @handle_exc
-    async def get_by_id(self, value: int) -> UserModel:
-        query = select(self.model).where(self.model.id == value)
+    async def get_by_id(self, value: int) -> Optional[User]:
+        query = (
+            select(self.model)
+            .where(self.model.id == value)
+            .options(
+                joinedload(self.model.laptop_templates),
+                joinedload(self.model.user_activity)
+            )
+        )
         result = await self._session.execute(query)
-        return result.scalars().one()
-    
+        db_user = result.scalars().unique().first()
+
+        if db_user:
+            return User.model_validate(db_user)
+        return None
+
     @handle_exc
-    async def get_all(self, offset: int = 0, limit: int = 10):
-        query = select(self.model).limit(limit).offset(offset)
+    async def get_all(self, offset: int = 0, limit: int = 10) -> List[User]:
+        query = (
+            select(self.model)
+            .limit(limit)
+            .offset(offset)
+            .options(
+                joinedload(self.model.laptop_templates),
+                joinedload(self.model.user_activity)
+            )
+        )
         result = await self._session.execute(query)
-        return result.scalars().all()
+        db_users = result.scalars().unique().all()
+
+        return [User.model_validate(user) for user in db_users]
     
     @handle_exc
     async def add(self, data: UserAddSchema):
         new_user = self.model(
             name=data.name,
-            password=data.password,
-            email=data.email
+            username=data.username,
+            hashed_password=data.password,
+            email=data.email,
+            active=True
         )
         self._session.add(new_user)
         
@@ -73,6 +109,8 @@ class UserPostgresRepository(DatabaseInterface):
                 user.email = data.email
             if data.name:
                 user.name = data.name
+            if data.username:
+                user.username = data.username
         else:
             return None
         

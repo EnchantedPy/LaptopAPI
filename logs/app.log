@@ -1,5 +1,29 @@
-2025-05-20 21:04:08	Logger	INFO	main.py:8	[Route(path='/openapi.json', name='openapi', methods=['GET', 'HEAD']), Route(path='/docs', name='swagger_ui_html', methods=['GET', 'HEAD']), Route(path='/docs/oauth2-redirect', name='swagger_ui_redirect', methods=['GET', 'HEAD']), Route(path='/redoc', name='redoc_html', methods=['GET', 'HEAD']), APIRoute(path='/auth/register', name='register', methods=['POST'])]
-2025-05-20 21:04:11	Logger	INFO	main.py:8	[Route(path='/openapi.json', name='openapi', methods=['GET', 'HEAD']), Route(path='/docs', name='swagger_ui_html', methods=['GET', 'HEAD']), Route(path='/docs/oauth2-redirect', name='swagger_ui_redirect', methods=['GET', 'HEAD']), Route(path='/redoc', name='redoc_html', methods=['GET', 'HEAD']), APIRoute(path='/auth/register', name='register', methods=['POST'])]
-2025-05-20 21:04:11	Logger	INFO	main.py:8	[Route(path='/openapi.json', name='openapi', methods=['GET', 'HEAD']), Route(path='/docs', name='swagger_ui_html', methods=['GET', 'HEAD']), Route(path='/docs/oauth2-redirect', name='swagger_ui_redirect', methods=['GET', 'HEAD']), Route(path='/redoc', name='redoc_html', methods=['GET', 'HEAD']), APIRoute(path='/auth/register', name='register', methods=['POST'])]
-2025-05-20 21:09:41	Logger	INFO	main.py:44	New launch at 2025-05-20 21:09:41
-2025-05-20 21:10:07	Logger	ERROR	UnitOfWork.py:79	Unexdected error in SQLAUoW: Multiple exceptions: [Errno 10061] Connect call failed ('::1', 5432, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 5432)
+2025-05-21 20:27:36	Logger	INFO	main.py:43	New launch at 2025-05-21 20:27:36
+2025-05-21 20:27:43	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
+2025-05-21 20:27:43	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
+2025-05-21 20:27:48	Logger	DEBUG	views.py:42	Path /register is public. Skipping authentication.
+2025-05-21 20:28:13	Logger	DEBUG	views.py:42	Path /login/user is public. Skipping authentication.
+2025-05-21 20:29:14	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
+2025-05-21 20:29:14	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
+2025-05-21 20:29:17	Logger	DEBUG	views.py:42	Path /login/user is public. Skipping authentication.
+2025-05-21 20:29:57	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
+2025-05-21 20:29:57	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
+2025-05-21 20:30:00	Logger	DEBUG	views.py:42	Path /login/user is public. Skipping authentication.
+2025-05-21 20:31:54	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
+2025-05-21 20:31:54	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
+2025-05-21 20:31:58	Logger	DEBUG	views.py:42	Path /login/user is public. Skipping authentication.
+2025-05-21 20:32:52	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
+2025-05-21 20:32:52	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
+2025-05-21 20:32:54	Logger	DEBUG	views.py:42	Path /login/user is public. Skipping authentication.
+2025-05-21 20:33:15	Logger	WARNING	views.py:63	Invalid access token (Subject must be a string). Attempting to refresh using refresh token.
+2025-05-21 20:36:43	Logger	INFO	main.py:43	New launch at 2025-05-21 20:36:43
+2025-05-21 20:36:48	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
+2025-05-21 20:36:48	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
+2025-05-21 20:36:54	Logger	WARNING	views.py:63	Invalid access token (Subject must be a string). Attempting to refresh using refresh token.
+2025-05-21 20:38:45	Logger	INFO	main.py:43	New launch at 2025-05-21 20:38:45
+2025-05-21 20:38:52	Logger	DEBUG	views.py:42	Path /login/user is public. Skipping authentication.
+2025-05-21 20:40:19	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
+2025-05-21 20:40:19	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
+2025-05-21 20:40:40	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
+2025-05-21 20:40:40	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
+2025-05-21 20:40:42	Logger	DEBUG	views.py:57	Access token valid for user 2.

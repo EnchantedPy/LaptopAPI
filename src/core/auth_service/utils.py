@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import uuid
 import jwt
 import bcrypt
@@ -23,7 +23,7 @@ def create_token(
 
 def create_access_token(user: User, admin: bool):
 	jwt_payload = {
-		'sub': user.id,
+		'sub': str(user.id),
 		'name': user.name,
 		'email': user.email,
 		'role': 'admin' if admin else 'user'
@@ -32,7 +32,7 @@ def create_access_token(user: User, admin: bool):
 
 def create_refresh_token(user: User, admin: bool):
 	jwt_payload = {
-		'sub': user.id,
+		'sub': str(user.id),
 		'role': 'admin' if admin else 'user'
 	}
 	return create_token(REFRESH_TOKEN_TYPE, jwt_payload, SAppSettings.refresh_token_expire_minutes)
@@ -46,7 +46,7 @@ def encode_jwt(
 ):
 	
 	to_encode = payload.copy()
-	now = datetime.now(datetime.timezone.utc)
+	now = datetime.now(timezone.utc)
 	exp = now + timedelta(minutes=expire_minutes)
 	jti = str(uuid.uuid4())
 	to_encode.update(
@@ -72,6 +72,7 @@ def decode_jwt(
 		algorithms=[algorithm],
 		key=public_key
 	)
+	decoded['sub'] = int(decoded['sub'])
 	return decoded
 
 

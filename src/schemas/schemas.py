@@ -4,12 +4,14 @@ from pydantic import BaseModel, EmailStr
 
 class UserAddSchema(BaseModel):
 	name: str
+	username: str
 	email: EmailStr
 	password: str
 
 class UserUpdateSchema(BaseModel):
 	user_id: int
 	name: Optional[str] = None
+	username: Optional[str] = None
 	email: Optional[EmailStr] = None
 	password: Optional[str] = None
 
