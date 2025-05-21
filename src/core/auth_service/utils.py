@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 import uuid
-from config.settings import SAppSettings
 import jwt
 import bcrypt
-from entities.UserObj import User
+from src.entities.entities import User
+from config.settings import SAppSettings
 
 ACCESS_TOKEN_TYPE = 'access'
 REFRESH_TOKEN_TYPE = 'refresh'
@@ -30,9 +30,10 @@ def create_access_token(user: User, admin: bool):
 	}
 	return create_token(ACCESS_TOKEN_TYPE, jwt_payload, SAppSettings.access_token_expire_minutes)
 
-def create_refresh_token(user: User):
+def create_refresh_token(user: User, admin: bool):
 	jwt_payload = {
-		'sub': user.id
+		'sub': user.id,
+		'role': 'admin' if admin else 'user'
 	}
 	return create_token(REFRESH_TOKEN_TYPE, jwt_payload, SAppSettings.refresh_token_expire_minutes)
 
@@ -72,7 +73,6 @@ def decode_jwt(
 		key=public_key
 	)
 	return decoded
-
 
 
 def hash_password(

@@ -16,10 +16,10 @@ def handle_exc(func):
             return await func(*args, **kwargs)
         except BotoCoreError as e:
             logger.error(f"AioBotoCore error in {func.__name__}: {e}")
-            return e  # _test_ for adding middleware later
+            raise e
         except Exception as e:
             logger.error(f"Unexpected error in {func.__name__}: {e}")
-            return e  # _test_ for adding middleware later
+            raise e
     return wrapper
 
 

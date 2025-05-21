@@ -3,13 +3,13 @@ from src.interfaces.AbstractDatabase import DatabaseInterface
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from functools import singledispatchmethod
-from models.models import UserModel, LaptopTemplateModel, UserActivityModel
+from src.models.models import UserModel, LaptopTemplateModel, UserActivityModel
 from src.schemas.schemas import LaptopAddSchema, LaptopDeleteSchema, LaptopUpdateSchema, UserAddSchema, \
     UserDeleteSchema, UserUpdateSchema, UserActivityAddSchema, UserActivityDeleteSchema
 from sqlalchemy.exc import SQLAlchemyError
 from functools import wraps
 from src.utils.logger import logger
-from models.models import Base
+from src.models.models import Base
 from datetime import datetime
 
 
@@ -20,10 +20,10 @@ def handle_exc(func):
             return await func(*args, **kwargs)
         except SQLAlchemyError as e:
             logger.error(f"Database error in {func.__name__}: {e}")
-            return e # _test_ for adding middleware later
+            raise e
         except Exception as e:
             logger.error(f"Unexdected error in {func.__name__}: {e}")
-            return e # _test_ for adding middleware later
+            raise e
     return wrapper
 
 

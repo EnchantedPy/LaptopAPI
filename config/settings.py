@@ -4,7 +4,7 @@ from typing import Any, Dict, Union
 import json
 from pathlib import Path
 
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 class AppSettings(BaseSettings):
@@ -44,11 +44,11 @@ class AppSettings(BaseSettings):
     refresh_token_expire_minutes: int = Field(..., env="refresh_token_expire_minutes")
     
     @property
-    def jwt_private_key_path():
+    def jwt_private_key_path(*args, **kwargs):
         return BASE_DIR / "certs" / "jwt-private.pem"
     
     @property
-    def jwt_public_key_path():
+    def jwt_public_key_path(*args, **kwargs):
         return BASE_DIR / "certs" / "jwt-public.pem"
 
     redis_url: str = Field(..., env="redis_url")

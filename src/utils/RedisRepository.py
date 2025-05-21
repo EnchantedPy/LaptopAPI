@@ -17,10 +17,10 @@ def handle_exc(func):
             return result
         except RedisError as e:
             logger.error(f"Redis error in {func.__name__}: {e}")
-            return e # _test_ for adding middleware later
+            raise e
         except Exception as e:
             logger.error(f"Unexdected error in {func.__name__}: {e}")
-            return e # _test_ for adding middleware later
+            raise e
     return wrapper
 
 

@@ -49,3 +49,13 @@ class UserActivityAddSchema(BaseModel):
 class UserActivityDeleteSchema(BaseModel):
 	user_id: int
 	activity_id: int
+
+
+class UserLoginSchema(BaseModel):
+	name: str
+	password: str
+
+class AdminLoginSchema(BaseModel):
+	name: str
+	password: str
+	admin_secret: str

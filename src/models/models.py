@@ -14,7 +14,7 @@ class UserModel(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
-    password: Mapped[str]
+    hashed_password: Mapped[bytes]
     email: Mapped[str] = mapped_column(String, unique=True)
     active: Mapped[bool]
     laptop_templates: Mapped[list['LaptopTemplateModel']] = relationship('LaptopTemplateModel', back_populates='user')

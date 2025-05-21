@@ -1,11 +1,13 @@
 from src.schemas.schemas import UserAddSchema, UserDeleteSchema, UserUpdateSchema
 from src.utils.UnitOfWork import SQLAlchemyUoW
 from src.utils.logger import logger
+from src.core.auth_service.utils import hash_password
 
 
 class UserService:
 
 	async def add(self, uow: SQLAlchemyUoW, data: UserAddSchema):
+		data.password = hash_password(data.password)
 		async with uow:
 			result = await uow.users.add(data)
 			return result

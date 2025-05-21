@@ -5,7 +5,7 @@ from sqlalchemy import pool
 from alembic import context
 
 # Locals
-from models.models import Base
+from src.models.models import Base
 from sqlalchemy import create_engine
 from config.settings import SAppSettings
 
