@@ -1,11 +1,13 @@
-2025-05-22 18:05:32	Logger	ERROR	views.py:82	Unexpected error during refresh token processing: 'type' object does not support the asynchronous context manager protocol
-2025-05-22 18:07:27	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
-2025-05-22 18:07:27	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
-2025-05-22 18:07:32	Logger	DEBUG	views.py:42	Path /login/user is public. Skipping authentication.
-2025-05-22 18:07:49	Logger	ERROR	views.py:82	Unexpected error during refresh token processing: type object 'SQLAlchemyUoW' has no attribute 'users'
-2025-05-22 18:14:57	Logger	INFO	main.py:43	New launch at 2025-05-22 18:14:57
-2025-05-22 18:15:01	Logger	DEBUG	views.py:42	Path /docs is public. Skipping authentication.
-2025-05-22 18:15:01	Logger	DEBUG	views.py:42	Path /openapi.json is public. Skipping authentication.
-2025-05-22 18:15:08	Logger	DEBUG	views.py:42	Path /login/user is public. Skipping authentication.
-2025-05-22 18:15:19	Logger	INFO	views.py:75	Access token refreshed for user 2.
-2025-05-22 18:15:19	Logger	DEBUG	views.py:111	New access token set in response cookie.
+2025-05-22 18:44:36	Logger	DEBUG	views.py:50	Path /docs is public. Skipping authentication.
+2025-05-22 18:44:36	Logger	DEBUG	views.py:50	Path /openapi.json is public. Skipping authentication.
+2025-05-22 18:45:10	Logger	DEBUG	views.py:50	Path /login/user is public. Skipping authentication.
+2025-05-22 18:45:24	Logger	DEBUG	views.py:94	Access token valid for user 2.
+2025-05-22 18:45:33	Logger	ERROR	views.py:136	Unexpected error during refresh token processing: 'User' object has no attribute 'get'
+2025-05-22 18:50:20	Logger	DEBUG	views.py:50	Path /docs is public. Skipping authentication.
+2025-05-22 18:50:20	Logger	DEBUG	views.py:50	Path /openapi.json is public. Skipping authentication.
+2025-05-22 18:50:27	Logger	DEBUG	views.py:50	Path /login/user is public. Skipping authentication.
+2025-05-22 18:50:31	Logger	DEBUG	views.py:94	Access token valid for user 2.
+2025-05-22 18:50:40	Logger	INFO	views.py:121	Access token refreshed for user 2.
+2025-05-22 18:50:40	Logger	DEBUG	views.py:158	New access token set in response cookie.
+2025-05-22 18:51:20	Logger	WARNING	views.py:136	No valid tokens found for path /login/admin. Unauthorized access attempt.
+2025-05-22 18:53:18	Logger	INFO	main.py:43	New launch at 2025-05-22 18:53:18
