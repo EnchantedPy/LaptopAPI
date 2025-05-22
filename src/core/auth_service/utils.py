@@ -21,19 +21,36 @@ def create_token(
 		expire_minutes=expire_minutes
 	)
 
-def create_access_token(user: User, admin: bool):
+
+def create_admin_access_token():
+	jwt_payload = {
+		'sub': str(SAppSettings.admin_id),
+		'name': SAppSettings.admin_name,
+		'role': 'admin'
+	}
+	return create_token(ACCESS_TOKEN_TYPE, jwt_payload, SAppSettings.access_token_expire_minutes)
+
+def create_admin_refresh_token():
+	jwt_payload = {
+		'sub': str(SAppSettings.admin_id),
+		'role': 'admin'
+	}
+	return create_token(REFRESH_TOKEN_TYPE, jwt_payload, SAppSettings.refresh_token_expire_minutes)
+
+
+def create_access_token(user: User):
 	jwt_payload = {
 		'sub': str(user.id),
 		'name': user.name,
 		'email': user.email,
-		'role': 'admin' if admin else 'user'
+		'role': 'user'
 	}
 	return create_token(ACCESS_TOKEN_TYPE, jwt_payload, SAppSettings.access_token_expire_minutes)
 
-def create_refresh_token(user: User, admin: bool):
+def create_refresh_token(user: User):
 	jwt_payload = {
 		'sub': str(user.id),
-		'role': 'admin' if admin else 'user'
+		'role': 'user'
 	}
 	return create_token(REFRESH_TOKEN_TYPE, jwt_payload, SAppSettings.refresh_token_expire_minutes)
 

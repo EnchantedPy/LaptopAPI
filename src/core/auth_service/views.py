@@ -7,9 +7,11 @@ from src.core.auth_service.utils import (
 	create_refresh_token,
 	validate_password,
 	hash_password,
-	decode_jwt
+	decode_jwt,
+   create_admin_access_token,
+   create_admin_refresh_token
 )
-from src.schemas.schemas import UserAddSchema, UserLoginSchema
+from src.schemas.schemas import AdminLoginSchema, UserAddSchema, UserLoginSchema
 from src.services.UserService import UserService
 from src.core.dependencies.dependencies import SqlUoWDep
 from jwt.exceptions import InvalidTokenError
@@ -22,7 +24,7 @@ from config.settings import SAppSettings
 auth = FastAPI(title='Auth Service')
 
 def get_sqla_uow() -> SQLAlchemyUoW:
-	return SQLAlchemyUoW
+	return SQLAlchemyUoW()
 
 PUBLIC_PATHS = [
     "/login/user",
@@ -134,8 +136,19 @@ async def login_user(data: UserLoginSchema, uow: SqlUoWDep, response: Response):
 	user = await UserService().get_by_name(uow, data.name)
 	if not validate_password(data.password, user.hashed_password):
 		raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect credentials')
-	access_token = create_access_token(user, admin=False)
-	refresh_token = create_refresh_token(user, admin=False)
+	access_token = create_access_token(user)
+	refresh_token = create_refresh_token(user)
+	response.set_cookie('Bearer-token', access_token)
+	response.set_cookie('Refresh-token', refresh_token)
+	return {'status': 'success'}
+
+
+@auth.post('/login/admin')
+async def login_user(data: AdminLoginSchema, response: Response):
+	if not data.password == SAppSettings.admin_password and not data.name == SAppSettings.admin_name and not data.admin_secret == SAppSettings.admin_secret:
+		raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect credentials')
+	access_token = create_admin_access_token()
+	refresh_token = create_admin_refresh_token()
 	response.set_cookie('Bearer-token', access_token)
 	response.set_cookie('Refresh-token', refresh_token)
 	return {'status': 'success'}

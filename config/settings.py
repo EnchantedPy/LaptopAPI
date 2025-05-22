@@ -33,8 +33,10 @@ class AppSettings(BaseSettings):
     postgres_password: str = Field(..., env="postgres_password")
     postgres_user: str = Field(..., env="postgres_user")
 
-    admin_username: str = Field(..., env="admin_username")
+    admin_name: str = Field(..., env="admin_username")
     admin_password: str = Field(..., env="admin_password")
+    admin_secret: str = Field(..., env="admin_secret")
+    admin_id: int = Field(..., env="admin_id")
 
     jwt_secret_key: str = Field(..., env="jwt_secret_key")
     jwt_cookie_name: str = Field(..., env="jwt_cookie_name")
