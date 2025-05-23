@@ -121,3 +121,21 @@ def test_auth_middleware(client, get_cookies):
     assert res.status_code == 200
     cookies = get_cookies()
     assert len(cookies) == 0
+    
+    res = client.post('/auth/login/admin', json={
+        'name': 'King',
+        'password': 'apple',
+        'admin_secret': 'qqq'
+	 })
+    assert res.status_code == 200
+    cookies = get_cookies()
+    assert cookies.get('Bearer-token') != None
+    assert cookies.get('Refresh-token') != None
+    
+    res = client.get('/auth/admin/test')
+    assert res.status_code == 200
+    assert res.json() == {'msg': 'seems like you are admin'}
+    
+    res = client.get('/auth/users/me')
+    assert res.status_code == 200
+    assert res.json().get('payload').get('role') == 'admin'

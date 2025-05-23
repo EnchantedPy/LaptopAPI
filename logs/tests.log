@@ -1,6 +1,20 @@
-2025-05-23 19:21:02	tests	INFO	test_api.py:14	{'log_level': 'DEBUG', 'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
-2025-05-23 19:21:02	tests	INFO	test_api.py:15	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
-2025-05-23 19:21:03	tests	INFO	test_api.py:95	Register response: 200, {"status":"success"}
-2025-05-23 19:21:03	tests	INFO	test_api.py:103	Login response: 200, {"status":"success"}
-2025-05-23 19:21:03	tests	INFO	test_api.py:109	User info response: 200, {"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}
-2025-05-23 19:21:03	tests	INFO	test_api.py:118	User info response: 200, {"status":"success"}
+2025-05-23 22:18:08	tests	INFO	test_api.py:16	{'log_level': 'DEBUG', 'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
+2025-05-23 22:18:08	tests	INFO	test_api.py:17	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
+2025-05-23 22:18:09	tests	INFO	test_api.py:97	Register response: 200, {"status":"success"}
+2025-05-23 22:18:09	tests	INFO	test_api.py:105	Login response: 200, {"status":"success"}
+2025-05-23 22:18:09	tests	INFO	test_api.py:111	User info response: 200, {"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}
+2025-05-23 22:18:09	tests	INFO	test_api.py:120	User info response: 200, {"status":"success"}
+2025-05-23 22:18:10	tests	INFO	test_api.py:140	<Response [200 OK]>
+2025-05-23 22:18:57	tests	INFO	test_api.py:16	{'log_level': 'DEBUG', 'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
+2025-05-23 22:18:57	tests	INFO	test_api.py:17	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
+2025-05-23 22:18:58	tests	INFO	test_api.py:97	Register response: 200, {"status":"success"}
+2025-05-23 22:18:58	tests	INFO	test_api.py:105	Login response: 200, {"status":"success"}
+2025-05-23 22:18:58	tests	INFO	test_api.py:111	User info response: 200, {"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}
+2025-05-23 22:18:58	tests	INFO	test_api.py:120	User info response: 200, {"status":"success"}
+2025-05-23 22:18:58	tests	INFO	test_api.py:140	{'payload': {'type': 'access', 'sub': 1384, 'name': 'King', 'role': 'admin'}}
+2025-05-23 22:19:53	tests	INFO	test_api.py:16	{'log_level': 'DEBUG', 'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
+2025-05-23 22:19:53	tests	INFO	test_api.py:17	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
+2025-05-23 22:19:54	tests	INFO	test_api.py:97	Register response: 200, {"status":"success"}
+2025-05-23 22:19:54	tests	INFO	test_api.py:105	Login response: 200, {"status":"success"}
+2025-05-23 22:19:54	tests	INFO	test_api.py:111	User info response: 200, {"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}
+2025-05-23 22:19:54	tests	INFO	test_api.py:120	User info response: 200, {"status":"success"}

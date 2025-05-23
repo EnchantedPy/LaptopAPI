@@ -2,3 +2,61 @@
 2025-05-23 19:21:03	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
 2025-05-23 19:21:03	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
 2025-05-23 19:21:03	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:13:59	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 22:13:59	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 22:14:00	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:14:00	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:14:00	Logger	DEBUG	main.py:59	Path /auth/login/admin is for unauthenticated users. Proceeding.
+2025-05-23 22:14:00	Logger	DEBUG	main.py:97	Admin access token valid for user 1384 to /auth/admin/test.
+2025-05-23 22:14:43	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 22:14:44	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 22:14:44	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:14:44	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:14:44	Logger	DEBUG	main.py:59	Path /auth/login/admin is for unauthenticated users. Proceeding.
+2025-05-23 22:14:44	Logger	DEBUG	main.py:97	Admin access token valid for user 1384 to /auth/admin/test.
+2025-05-23 22:15:07	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 22:15:07	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 22:15:08	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:15:08	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:15:08	Logger	DEBUG	main.py:59	Path /auth/login/admin is for unauthenticated users. Proceeding.
+2025-05-23 22:15:08	Logger	DEBUG	main.py:97	Admin access token valid for user 1384 to /auth/admin/test.
+2025-05-23 22:16:44	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 22:16:45	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 22:16:45	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:16:45	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:16:45	Logger	DEBUG	main.py:59	Path /auth/login/admin is for unauthenticated users. Proceeding.
+2025-05-23 22:16:45	Logger	DEBUG	main.py:97	Admin access token valid for user 1384 to /auth/admin/test.
+2025-05-23 22:17:22	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 22:17:23	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 22:17:23	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:17:23	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:17:23	Logger	DEBUG	main.py:59	Path /auth/login/admin is for unauthenticated users. Proceeding.
+2025-05-23 22:17:24	Logger	DEBUG	main.py:97	Admin access token valid for user 1384 to /auth/admin/test.
+2025-05-23 22:17:39	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 22:17:40	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 22:17:40	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:17:40	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:17:40	Logger	DEBUG	main.py:59	Path /auth/login/admin is for unauthenticated users. Proceeding.
+2025-05-23 22:17:40	Logger	DEBUG	main.py:97	Admin access token valid for user 1384 to /auth/admin/test.
+2025-05-23 22:17:40	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:18:09	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 22:18:09	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 22:18:09	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:18:09	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:18:09	Logger	DEBUG	main.py:59	Path /auth/login/admin is for unauthenticated users. Proceeding.
+2025-05-23 22:18:10	Logger	DEBUG	main.py:97	Admin access token valid for user 1384 to /auth/admin/test.
+2025-05-23 22:18:10	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:18:57	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 22:18:58	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 22:18:58	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:18:58	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:18:58	Logger	DEBUG	main.py:59	Path /auth/login/admin is for unauthenticated users. Proceeding.
+2025-05-23 22:18:58	Logger	DEBUG	main.py:97	Admin access token valid for user 1384 to /auth/admin/test.
+2025-05-23 22:18:58	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:19:53	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 22:19:54	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 22:19:54	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 22:19:54	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
+2025-05-23 22:19:54	Logger	DEBUG	main.py:59	Path /auth/login/admin is for unauthenticated users. Proceeding.
+2025-05-23 22:19:54	Logger	DEBUG	main.py:97	Admin access token valid for user 1384 to /auth/admin/test.
+2025-05-23 22:19:54	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
