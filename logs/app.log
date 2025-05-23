@@ -11,3 +11,8 @@
 2025-05-22 18:50:40	Logger	DEBUG	views.py:158	New access token set in response cookie.
 2025-05-22 18:51:20	Logger	WARNING	views.py:136	No valid tokens found for path /login/admin. Unauthorized access attempt.
 2025-05-22 18:53:18	Logger	INFO	main.py:43	New launch at 2025-05-22 18:53:18
+2025-05-22 18:53:24	Logger	DEBUG	views.py:51	Path /docs is public. Skipping authentication.
+2025-05-22 18:53:24	Logger	DEBUG	views.py:51	Path /openapi.json is public. Skipping authentication.
+2025-05-22 18:53:37	Logger	DEBUG	views.py:51	Path /login/admin is public. Skipping authentication.
+2025-05-22 18:53:47	Logger	DEBUG	views.py:77	Admin access token valid for user 1384 to /admin/test.
+2025-05-22 18:54:01	Logger	WARNING	views.py:63	Admin path /admin/test accessed without access token.

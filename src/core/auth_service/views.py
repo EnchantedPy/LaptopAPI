@@ -71,12 +71,11 @@ async def auth_middleware(
             if current_payload.get('role') != 'admin':
                 logger.warning(f"User {current_payload.get('sub')} attempted admin access to {path} without admin role.")
                 raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN, # 403 Forbidden, так как токен есть, но роль не подходит
+                    status_code=status.HTTP_403_FORBIDDEN,
                     detail='Access denied. Admin privileges required.'
                 )
             logger.debug(f"Admin access token valid for user {current_payload['sub']} to {path}.")
-            # Для админов не генерируем новый токен, если он просто истек, предполагаем, что они должны перелогиниться
-            # или их токены имеют долгий срок жизни и не требуют refresh
+            
         except (ExpiredSignatureError, InvalidTokenError) as e:
             logger.warning(f"Admin access token invalid or expired for {path}: {e}.")
             raise HTTPException(
@@ -105,14 +104,6 @@ async def auth_middleware(
             try:
                 payload = decode_jwt(refresh_token)
                 user_id = payload.get('sub')
-                # Дополнительная проверка роли для refresh token, если это необходимо
-                # Например, если refresh token админа не должен генерировать user access token
-                if payload.get('role') == 'admin':
-                     logger.warning(f"Attempted to refresh user token using admin refresh token for user {user_id}. Denying.")
-                     raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail='Forbidden: Admin refresh token cannot be used for user access.'
-                    )
 
                 uow = get_sqla_uow()
                 async with uow:
@@ -140,10 +131,9 @@ async def auth_middleware(
             detail='Authentication required. No valid tokens found.'
         )
 
-    # Если мы дошли до этого места, значит, у нас есть действительный payload (админ или обычный пользователь)
     request.state.user_id = current_payload['sub']
     request.state.user_payload = current_payload
-    # Можно также добавить request.state.user_role = current_payload.get('role') для удобства
+    request.state.user_role = current_payload.get('role')
 
     response = await call_next(request)
 
@@ -153,7 +143,7 @@ async def auth_middleware(
             value=new_access_token,
             httponly=True,
             samesite="lax",
-            # secure=True, # Включить для продакшена (HTTPS)
+            # secure=True,
             max_age=SAppSettings.access_token_expire_minutes * 60
         )
         logger.debug("New access token set in response cookie.")
