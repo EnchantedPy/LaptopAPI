@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings
 from pydantic import ConfigDict, Field
 
 class TestSettings(BaseSettings):
+    log_level: str = Field(..., validation_alias="LOG_LEVEL")
     test_pg_host: str = Field(..., validation_alias="POSTGRES_HOST")
     test_pg_port: int = Field(..., validation_alias="POSTGRES_PORT")
     test_pg_db: str = Field(..., validation_alias="POSTGRES_DB")

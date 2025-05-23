@@ -1,30 +1,4 @@
-2025-05-23 16:45:50	Logger	INFO	test_api.py:19	{'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
-2025-05-23 16:45:50	Logger	INFO	test_api.py:20	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
-2025-05-23 16:45:50	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
-2025-05-23 16:45:53	Logger	ERROR	UnitOfWork.py:79	Unexdected error in SQLAUoW: [Errno 11001] getaddrinfo failed
-2025-05-23 16:45:53	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
-2025-05-23 16:45:56	Logger	ERROR	PostgresRepository.py:27	Unexdected error in get_by_name: [Errno 11001] getaddrinfo failed
-2025-05-23 16:47:04	Logger	INFO	test_api.py:19	{'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
-2025-05-23 16:47:04	Logger	INFO	test_api.py:20	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
-2025-05-23 16:47:04	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
-2025-05-23 16:47:07	Logger	ERROR	UnitOfWork.py:79	Unexdected error in SQLAUoW: [Errno 11001] getaddrinfo failed
-2025-05-23 16:47:07	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
-2025-05-23 16:47:10	Logger	ERROR	PostgresRepository.py:27	Unexdected error in get_by_name: [Errno 11001] getaddrinfo failed
-2025-05-23 16:51:29	Logger	INFO	test_api.py:19	{'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
-2025-05-23 16:51:29	Logger	INFO	test_api.py:20	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
-2025-05-23 16:51:29	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
-2025-05-23 16:51:32	Logger	ERROR	UnitOfWork.py:79	Unexdected error in SQLAUoW: [Errno 11001] getaddrinfo failed
-2025-05-23 16:51:32	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
-2025-05-23 16:51:35	Logger	ERROR	PostgresRepository.py:27	Unexdected error in get_by_name: [Errno 11001] getaddrinfo failed
-2025-05-23 16:57:30	Logger	INFO	test_api.py:18	{'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
-2025-05-23 16:57:30	Logger	INFO	test_api.py:19	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
-2025-05-23 16:57:31	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
-2025-05-23 16:57:34	Logger	ERROR	UnitOfWork.py:79	Unexdected error in SQLAUoW: [Errno 11001] getaddrinfo failed
-2025-05-23 16:57:34	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
-2025-05-23 16:57:36	Logger	ERROR	PostgresRepository.py:27	Unexdected error in get_by_name: [Errno 11001] getaddrinfo failed
-2025-05-23 17:13:16	Logger	INFO	test_api.py:17	{'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
-2025-05-23 17:13:16	Logger	INFO	test_api.py:18	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
-2025-05-23 17:13:16	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
-2025-05-23 17:13:19	Logger	ERROR	UnitOfWork.py:79	Unexdected error in SQLAUoW: [Errno 11001] getaddrinfo failed
-2025-05-23 17:13:19	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
-2025-05-23 17:13:22	Logger	ERROR	PostgresRepository.py:27	Unexdected error in get_by_name: [Errno 11001] getaddrinfo failed
+2025-05-23 19:21:02	Logger	DEBUG	main.py:59	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-23 19:21:03	Logger	DEBUG	main.py:59	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-23 19:21:03	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/users/me.
+2025-05-23 19:21:03	Logger	DEBUG	main.py:76	Authenticated user attempting to log out from /auth/logout.
