@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from redis.asyncio import Redis, from_url
+from src.core.exceptions.exceptions import DatabaseError
 from src.db.realtional_db import async_session_maker
 from src.repositories.user import UserRepository
 from src.repositories.laptop import LaptopRepository
@@ -77,3 +78,4 @@ class SQLAlchemyUoW:
 		except Exception as e:
 			await self.rollback()
 			logger.error(f"Unexdected error in SQLAUoW: {e}")
+			raise DatabaseError

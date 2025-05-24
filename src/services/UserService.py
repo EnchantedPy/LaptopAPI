@@ -22,6 +22,11 @@ class UserService:
 			result = await uow.users.get_by_name(value)
 			return result
 		
+	async def get_by_username(self, uow: SQLAlchemyUoW, value: str):
+		async with uow:
+			result = await uow.users.get_by_username(value)
+			return result
+		
 	async def get_by_id(self, uow: SQLAlchemyUoW, value: int):
 		async with uow:
 			result = await uow.users.get_by_id(value)

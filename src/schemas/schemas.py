@@ -54,7 +54,7 @@ class UserActivityDeleteSchema(BaseModel):
 
 
 class UserLoginSchema(BaseModel):
-	name: str
+	username: str
 	password: str
 
 class AdminLoginSchema(BaseModel):

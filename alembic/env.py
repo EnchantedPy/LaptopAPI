@@ -9,7 +9,7 @@ from src.models.models import Base
 from sqlalchemy import create_engine
 from config.settings import SAppSettings
 
-SQLALCHEMY_DATABASE_URL = SAppSettings.postgres_url.replace("asyncpg", "psycopg2")
+SQLALCHEMY_DATABASE_URL = SAppSettings.postgres_url.replace("asyncpg", "psycopg2").replace('postgres_db', 'localhost')
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

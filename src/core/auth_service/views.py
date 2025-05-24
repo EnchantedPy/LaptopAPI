@@ -1,7 +1,5 @@
-from fastapi import HTTPException, middleware, FastAPI, Request, Response, status, APIRouter
-from typing import Awaitable, Callable, Optional
-from jwt import ExpiredSignatureError
-from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi import HTTPException, Request, Response, status, APIRouter
+
 from src.core.auth_service.utils import (
 	create_access_token,
 	create_refresh_token,
@@ -11,19 +9,15 @@ from src.core.auth_service.utils import (
    create_admin_access_token,
    create_admin_refresh_token
 )
+
 from src.schemas.schemas import AdminLoginSchema, UserAddSchema, UserLoginSchema
 from src.services.UserService import UserService
 from src.core.dependencies.dependencies import SqlUoWDep
-from jwt.exceptions import InvalidTokenError
 from src.utils.logger import logger
-from src.utils.UnitOfWork import SQLAlchemyUoW
 from src.services.UserService import UserService
-from src.entities.entities import TokenPayload
 from config.settings import SAppSettings
 
 auth = APIRouter(prefix='/auth', tags=['Auth'])
-
-
 
 
 '''
@@ -42,7 +36,7 @@ async def register(data: UserAddSchema, uow: SqlUoWDep):
 
 @auth.post('/login/user')
 async def login_user(data: UserLoginSchema, uow: SqlUoWDep, response: Response):
-	user = await UserService().get_by_name(uow, data.name)
+	user = await UserService().get_by_username(uow, data.username)
 	if not validate_password(data.password, user.hashed_password):
 		raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect credentials')
 	access_token = create_access_token(user)
@@ -62,7 +56,7 @@ async def login_user(data: AdminLoginSchema, response: Response):
 	response.set_cookie('Refresh-token', refresh_token)
 	return {'status': 'success'}
 
-@auth.get('/logout')
+@auth.post('/logout')
 async def logout(response: Response):
 	response.delete_cookie('Bearer-token')
 	response.delete_cookie('Refresh-token')

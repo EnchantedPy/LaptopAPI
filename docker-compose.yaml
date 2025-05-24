@@ -95,12 +95,12 @@ services:
     image: postgres:16-alpine
     container_name: postgres_test_db
     ports:
-      - "5445:5432"
+      - "5445:5445"
     environment:
       POSTGRES_DB: test_db
       POSTGRES_USER: test_user
       POSTGRES_PASSWORD: test_password
-      PGPORT: 5432
+      PGPORT: 5445
     volumes:
       - postgres_test_data:/var/lib/postgresql/data
     healthcheck:

@@ -13,8 +13,8 @@ class UserModel(Base):
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str]
-    name: Mapped[str] = mapped_column(String, unique=True)
+    username: Mapped[str] = mapped_column(String, unique=True)
+    name: Mapped[str]
     hashed_password: Mapped[bytes]
     email: Mapped[str] = mapped_column(String, unique=True)
     active: Mapped[bool]

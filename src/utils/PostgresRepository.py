@@ -34,12 +34,14 @@ class UserPostgresRepository(DatabaseInterface):
     
     def __init__(self, _session: AsyncSession):
         self._session = _session
-
+        
     @handle_exc
-    async def get_by_name(self, value: str) -> Optional[User]:
+    async def get_by_username(self, value: str, offset: int = 0, limit: int = 10) -> Optional[User]:
         query = (
             select(self.model)
-            .where(self.model.name == value)
+            .where(self.model.username == value)
+            .limit(limit)
+            .offset(offset)
             .options(
                 joinedload(self.model.laptop_templates),
                 joinedload(self.model.user_activity)
@@ -50,6 +52,23 @@ class UserPostgresRepository(DatabaseInterface):
 
         if db_user:
             return User.model_validate(db_user)
+        return None
+
+    @handle_exc
+    async def get_by_name(self, value: str) -> List[User]:
+        query = (
+            select(self.model)
+            .where(self.model.name == value)
+            .options(
+                joinedload(self.model.laptop_templates),
+                joinedload(self.model.user_activity)
+            )
+        )
+        result = await self._session.execute(query)
+        db_users = result.scalars().unique().all()
+
+        if db_users:
+            return [User.model_validate(db_user) for db_user in db_users]
         return None
 
     @handle_exc

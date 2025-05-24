@@ -1,10 +1,12 @@
 from typing import Awaitable, Callable, Optional
 from fastapi import FastAPI, HTTPException, Request, Response, status
+from fastapi.responses import JSONResponse
 from jwt import ExpiredSignatureError, InvalidTokenError
 from config.settings import SAppSettings
 from src.core.auth_service.utils import create_access_token, decode_jwt
 from src.core.auth_service.views import auth
 import uvicorn
+from src.core.exceptions.exceptions import DatabaseError
 from src.entities.entities import TokenPayload
 from src.utils.UnitOfWork import SQLAlchemyUoW
 from src.utils.logger import logger
@@ -14,6 +16,12 @@ from starlette.middleware.base import BaseHTTPMiddleware
 app = FastAPI(title='Laptop API')
 app.include_router(auth)
 
+@app.exception_handler(DatabaseError)
+async def user_already_exists_handler(request: Request, exc: DatabaseError):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
 
 def get_sqla_uow() -> SQLAlchemyUoW:
 	return SQLAlchemyUoW()
@@ -48,13 +56,12 @@ async def auth_middleware(
 
     if path in UNAUTHENTICATED_ONLY_PATHS:
         if current_payload:
-            logger.info(f"Logged-in user {current_payload.get('sub')} attempted to access {path}. Redirecting.")
+            logger.info(f"Logged-in user {current_payload.get('sub')} attempted to access {path}")
             # You might want to redirect to a user dashboard or home page
             # For simplicity, we'll raise an error, but a redirect is better UX
             raise HTTPException(
-                status_code=status.HTTP_303_SEE_OTHER,
-                detail="Already logged in.",
-                headers={"Location": "/"} # Redirect to home or dashboard
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Already logged in",
             )
         logger.debug(f"Path {path} is for unauthenticated users. Proceeding.")
         return await call_next(request)
@@ -70,7 +77,7 @@ async def auth_middleware(
             logger.warning(f"Unauthenticated user attempted to access {path}.")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='Authentication required to log out.'
+                detail='Authentication required for this path'
             )
         # If they have tokens, they can proceed to logout logic which will invalidate them
         logger.debug(f"Authenticated user attempting to log out from {path}.")
@@ -172,6 +179,19 @@ async def auth_middleware(
 
 
 app.add_middleware(BaseHTTPMiddleware, dispatch=auth_middleware)
+
+
+
+@app.get('/healthcheck', tags=['Healthcheck'])
+def healthcheck():
+    return {'Status': 'healthy'}
+
+@app.get('/errors')
+def errors():
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail='This is an autoerror endpoint'
+	 )
 
 
 if __name__ == '__main__':

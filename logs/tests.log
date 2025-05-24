@@ -1,20 +1,238 @@
-2025-05-23 22:18:08	tests	INFO	test_api.py:16	{'log_level': 'DEBUG', 'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
-2025-05-23 22:18:08	tests	INFO	test_api.py:17	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
-2025-05-23 22:18:09	tests	INFO	test_api.py:97	Register response: 200, {"status":"success"}
-2025-05-23 22:18:09	tests	INFO	test_api.py:105	Login response: 200, {"status":"success"}
-2025-05-23 22:18:09	tests	INFO	test_api.py:111	User info response: 200, {"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}
-2025-05-23 22:18:09	tests	INFO	test_api.py:120	User info response: 200, {"status":"success"}
-2025-05-23 22:18:10	tests	INFO	test_api.py:140	<Response [200 OK]>
-2025-05-23 22:18:57	tests	INFO	test_api.py:16	{'log_level': 'DEBUG', 'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
-2025-05-23 22:18:57	tests	INFO	test_api.py:17	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
-2025-05-23 22:18:58	tests	INFO	test_api.py:97	Register response: 200, {"status":"success"}
-2025-05-23 22:18:58	tests	INFO	test_api.py:105	Login response: 200, {"status":"success"}
-2025-05-23 22:18:58	tests	INFO	test_api.py:111	User info response: 200, {"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}
-2025-05-23 22:18:58	tests	INFO	test_api.py:120	User info response: 200, {"status":"success"}
-2025-05-23 22:18:58	tests	INFO	test_api.py:140	{'payload': {'type': 'access', 'sub': 1384, 'name': 'King', 'role': 'admin'}}
-2025-05-23 22:19:53	tests	INFO	test_api.py:16	{'log_level': 'DEBUG', 'test_pg_host': 'localhost', 'test_pg_port': 5445, 'test_pg_db': 'test_db', 'test_pg_user': 'test_user', 'test_pg_password': 'test_password'}
-2025-05-23 22:19:53	tests	INFO	test_api.py:17	postgresql+asyncpg://test_user:test_password@localhost:5445/test_db
-2025-05-23 22:19:54	tests	INFO	test_api.py:97	Register response: 200, {"status":"success"}
-2025-05-23 22:19:54	tests	INFO	test_api.py:105	Login response: 200, {"status":"success"}
-2025-05-23 22:19:54	tests	INFO	test_api.py:111	User info response: 200, {"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}
-2025-05-23 22:19:54	tests	INFO	test_api.py:120	User info response: 200, {"status":"success"}
+2025-05-24 19:36:55	tests	INFO	conftest.py:128	Request to /auth/register, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 19:36:56	tests	INFO	conftest.py:128	Request to /auth/login/user, method = POST, json = {'name': 'Danila', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 19:36:56	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}'
+
+2025-05-24 19:36:56	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Maxim', 'username': 'odyssey', 'email': 'maxim@example.com', 'password': '321'}, response status is 403, response content is 'Already logged in.'
+
+2025-05-24 19:36:56	tests	INFO	conftest.py:128	Request to /auth/logout, method = GET, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 19:36:56	tests	INFO	conftest.py:128	Request to /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 19:36:56	tests	INFO	conftest.py:128	Request to /auth/admin/test, method = GET, json = None, response status is 200, response content is '{"msg":"seems like you are admin"}'
+
+2025-05-24 19:36:56	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1384,"name":"King","role":"admin"}}'
+
+2025-05-24 19:36:56	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Poma', 'username': 'redokn', 'email': 'poma@example.com', 'password': '12345'}, response status is 403, response content is 'Already logged in.'
+
+2025-05-24 19:36:56	tests	ERROR	conftest.py:117	Intended error at /auth/login/user, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 403, response content is 'Already logged in.'
+
+2025-05-24 19:36:56	tests	ERROR	conftest.py:117	Intended error at /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 403, response content is 'Already logged in.'
+
+2025-05-24 19:36:56	tests	INFO	conftest.py:128	Request to /auth/logout, method = GET, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 19:36:56	tests	ERROR	conftest.py:117	Intended error at /auth/logout, method = GET, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 19:36:56	tests	ERROR	conftest.py:117	Intended error at /auth/users/me, method = GET, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 19:36:56	tests	ERROR	conftest.py:117	Intended error at /auth/admin/test, method = GET, json = None, response status is 401, response content is 'Authentication required for admin access.'
+
+2025-05-24 20:00:59	tests	INFO	conftest.py:128	Request to /auth/register, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:00:59	tests	INFO	conftest.py:128	Request to /auth/login/user, method = POST, json = {'name': 'Danila', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:00:59	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}'
+
+2025-05-24 20:00:59	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Maxim', 'username': 'odyssey', 'email': 'maxim@example.com', 'password': '321'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:00:59	tests	INFO	conftest.py:128	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:00:59	tests	INFO	conftest.py:128	Request to /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:00:59	tests	INFO	conftest.py:128	Request to /auth/admin/test, method = GET, json = None, response status is 200, response content is '{"msg":"seems like you are admin"}'
+
+2025-05-24 20:00:59	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1384,"name":"King","role":"admin"}}'
+
+2025-05-24 20:00:59	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Poma', 'username': 'redokn', 'email': 'poma@example.com', 'password': '12345'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:00:59	tests	ERROR	conftest.py:117	Intended error at /auth/login/user, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:00:59	tests	ERROR	conftest.py:117	Intended error at /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:00:59	tests	INFO	conftest.py:128	Request to /auth/logout, method = GET, json = None, response status is 405, response content is '{"detail":"Method Not Allowed"}'
+
+2025-05-24 20:01:25	tests	INFO	conftest.py:128	Request to /auth/register, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:01:25	tests	INFO	conftest.py:128	Request to /auth/login/user, method = POST, json = {'name': 'Danila', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:01:25	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}'
+
+2025-05-24 20:01:25	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Maxim', 'username': 'odyssey', 'email': 'maxim@example.com', 'password': '321'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:01:25	tests	INFO	conftest.py:128	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:01:25	tests	INFO	conftest.py:128	Request to /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:01:25	tests	INFO	conftest.py:128	Request to /auth/admin/test, method = GET, json = None, response status is 200, response content is '{"msg":"seems like you are admin"}'
+
+2025-05-24 20:01:25	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1384,"name":"King","role":"admin"}}'
+
+2025-05-24 20:01:25	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Poma', 'username': 'redokn', 'email': 'poma@example.com', 'password': '12345'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:01:25	tests	ERROR	conftest.py:117	Intended error at /auth/login/user, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:01:25	tests	ERROR	conftest.py:117	Intended error at /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:01:25	tests	INFO	conftest.py:128	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:01:25	tests	ERROR	conftest.py:117	Intended error at /auth/logout, method = POST, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:01:25	tests	ERROR	conftest.py:117	Intended error at /auth/users/me, method = GET, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:01:25	tests	ERROR	conftest.py:117	Intended error at /auth/admin/test, method = GET, json = None, response status is 401, response content is 'Authentication required for admin access.'
+
+2025-05-24 20:27:14	tests	INFO	conftest.py:128	Request to /auth/register, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:28:33	tests	INFO	conftest.py:128	Request to /auth/register, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:28:56	tests	INFO	conftest.py:128	Request to /auth/register, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:28:56	tests	INFO	conftest.py:128	Request to /auth/login/user, method = POST, json = {'username': 'ovrkill', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:28:56	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}'
+
+2025-05-24 20:28:56	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Maxim', 'username': 'odyssey', 'email': 'maxim@example.com', 'password': '321'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:28:56	tests	INFO	conftest.py:128	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:28:56	tests	INFO	conftest.py:128	Request to /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:28:56	tests	INFO	conftest.py:128	Request to /auth/admin/test, method = GET, json = None, response status is 200, response content is '{"msg":"seems like you are admin"}'
+
+2025-05-24 20:28:56	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1384,"name":"King","role":"admin"}}'
+
+2025-05-24 20:28:56	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Poma', 'username': 'redokn', 'email': 'poma@example.com', 'password': '12345'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:28:56	tests	ERROR	conftest.py:117	Intended error at /auth/login/user, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:28:56	tests	ERROR	conftest.py:117	Intended error at /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:28:56	tests	INFO	conftest.py:128	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:28:56	tests	ERROR	conftest.py:117	Intended error at /auth/logout, method = POST, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:28:56	tests	ERROR	conftest.py:117	Intended error at /auth/users/me, method = GET, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:28:56	tests	ERROR	conftest.py:117	Intended error at /auth/admin/test, method = GET, json = None, response status is 401, response content is 'Authentication required for admin access.'
+
+2025-05-24 20:28:57	tests	ERROR	conftest.py:43	Unexpected error in test SQLAlchemyUoW: (sqlalchemy.dialects.postgresql.asyncpg.IntegrityError) <class 'asyncpg.exceptions.UniqueViolationError'>: duplicate key value violates unique constraint "users_username_key"
+DETAIL:  Key (username)=(ovrkill) already exists.
+[SQL: INSERT INTO users (username, name, hashed_password, email, active) VALUES ($1::VARCHAR, $2::VARCHAR, $3::BYTEA, $4::VARCHAR, $5::BOOLEAN) RETURNING users.id]
+[parameters: ('ovrkill', 'Poma', b'$2b$12$EasQi4F.b2xGsgtVr59rEeJNfX/UOqpb8lnsHNZJdzEHJS6ymTYCG', 'secondpoma@example.com', True)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) 
+
+2025-05-24 20:48:12	tests	INFO	conftest.py:128	Request to /auth/register, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:48:12	tests	INFO	conftest.py:128	Request to /auth/login/user, method = POST, json = {'username': 'ovrkill', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:48:12	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}'
+
+2025-05-24 20:48:12	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Maxim', 'username': 'odyssey', 'email': 'maxim@example.com', 'password': '321'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:48:12	tests	INFO	conftest.py:128	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:48:12	tests	INFO	conftest.py:128	Request to /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:48:12	tests	INFO	conftest.py:128	Request to /auth/admin/test, method = GET, json = None, response status is 200, response content is '{"msg":"seems like you are admin"}'
+
+2025-05-24 20:48:12	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1384,"name":"King","role":"admin"}}'
+
+2025-05-24 20:48:12	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Poma', 'username': 'redokn', 'email': 'poma@example.com', 'password': '12345'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:48:12	tests	ERROR	conftest.py:117	Intended error at /auth/login/user, method = POST, json = {'username': 'ovrkill', 'password': '123'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:48:12	tests	ERROR	conftest.py:117	Intended error at /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:48:12	tests	INFO	conftest.py:128	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:48:12	tests	ERROR	conftest.py:117	Intended error at /auth/logout, method = POST, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:48:12	tests	ERROR	conftest.py:117	Intended error at /auth/users/me, method = GET, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:48:12	tests	ERROR	conftest.py:117	Intended error at /auth/admin/test, method = GET, json = None, response status is 401, response content is 'Authentication required for admin access.'
+
+2025-05-24 20:48:12	tests	ERROR	conftest.py:43	Unexpected error in test SQLAlchemyUoW: (sqlalchemy.dialects.postgresql.asyncpg.IntegrityError) <class 'asyncpg.exceptions.UniqueViolationError'>: duplicate key value violates unique constraint "users_username_key"
+DETAIL:  Key (username)=(ovrkill) already exists.
+[SQL: INSERT INTO users (username, name, hashed_password, email, active) VALUES ($1::VARCHAR, $2::VARCHAR, $3::BYTEA, $4::VARCHAR, $5::BOOLEAN) RETURNING users.id]
+[parameters: ('ovrkill', 'Poma', b'$2b$12$BrMJ7dy8FmWCBMLRwDi./eysrBbeGiGfEdmB11JSc/RY3NFo6XDJy', 'secondpoma@example.com', True)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) 
+
+2025-05-24 20:48:12	tests	INFO	conftest.py:128	Request to auth/register, method = POST, json = {'name': 'Poma', 'username': 'ovrkill', 'email': 'secondpoma@example.com', 'password': 'secret'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:50:09	tests	INFO	conftest.py:128	Request to /auth/register, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:50:09	tests	INFO	conftest.py:128	Request to /auth/login/user, method = POST, json = {'username': 'ovrkill', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:50:09	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}'
+
+2025-05-24 20:50:09	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Maxim', 'username': 'odyssey', 'email': 'maxim@example.com', 'password': '321'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:50:09	tests	INFO	conftest.py:128	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:50:09	tests	INFO	conftest.py:128	Request to /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:50:09	tests	INFO	conftest.py:128	Request to /auth/admin/test, method = GET, json = None, response status is 200, response content is '{"msg":"seems like you are admin"}'
+
+2025-05-24 20:50:09	tests	INFO	conftest.py:128	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1384,"name":"King","role":"admin"}}'
+
+2025-05-24 20:50:09	tests	ERROR	conftest.py:117	Intended error at /auth/register, method = POST, json = {'name': 'Poma', 'username': 'redokn', 'email': 'poma@example.com', 'password': '12345'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:50:09	tests	ERROR	conftest.py:117	Intended error at /auth/login/user, method = POST, json = {'username': 'ovrkill', 'password': '123'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:50:09	tests	ERROR	conftest.py:117	Intended error at /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:50:09	tests	INFO	conftest.py:128	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:50:09	tests	ERROR	conftest.py:117	Intended error at /auth/logout, method = POST, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:50:09	tests	ERROR	conftest.py:117	Intended error at /auth/users/me, method = GET, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:50:09	tests	ERROR	conftest.py:117	Intended error at /auth/admin/test, method = GET, json = None, response status is 401, response content is 'Authentication required for admin access.'
+
+2025-05-24 20:50:10	tests	ERROR	conftest.py:43	Unexpected error in test SQLAlchemyUoW: (sqlalchemy.dialects.postgresql.asyncpg.IntegrityError) <class 'asyncpg.exceptions.UniqueViolationError'>: duplicate key value violates unique constraint "users_username_key"
+DETAIL:  Key (username)=(ovrkill) already exists.
+[SQL: INSERT INTO users (username, name, hashed_password, email, active) VALUES ($1::VARCHAR, $2::VARCHAR, $3::BYTEA, $4::VARCHAR, $5::BOOLEAN) RETURNING users.id]
+[parameters: ('ovrkill', 'Poma', b'$2b$12$M96Rch5HGCeyepmeQds5neXvaUFO8wmGtvlfp3CREaGp/1lv.4WFK', 'secondpoma@example.com', True)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) 
+
+2025-05-24 20:50:10	tests	INFO	conftest.py:128	Request to auth/register, method = POST, json = {'name': 'Poma', 'username': 'ovrkill', 'email': 'secondpoma@example.com', 'password': 'secret'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:55:38	tests	INFO	conftest.py:130	Request to /auth/register, method = POST, json = {'name': 'Danila', 'username': 'ovrkill', 'email': 'danila@example.com', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:55:39	tests	INFO	conftest.py:130	Request to /auth/login/user, method = POST, json = {'username': 'ovrkill', 'password': '123'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:55:39	tests	INFO	conftest.py:130	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1,"name":"Danila","email":"danila@example.com","role":"user"}}'
+
+2025-05-24 20:55:39	tests	ERROR	conftest.py:119	Intended error at /auth/register, method = POST, json = {'name': 'Maxim', 'username': 'odyssey', 'email': 'maxim@example.com', 'password': '321'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:55:39	tests	INFO	conftest.py:130	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:55:39	tests	INFO	conftest.py:130	Request to /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:55:39	tests	INFO	conftest.py:130	Request to /auth/admin/test, method = GET, json = None, response status is 200, response content is '{"msg":"seems like you are admin"}'
+
+2025-05-24 20:55:39	tests	INFO	conftest.py:130	Request to /auth/users/me, method = GET, json = None, response status is 200, response content is '{"payload":{"type":"access","sub":1384,"name":"King","role":"admin"}}'
+
+2025-05-24 20:55:39	tests	ERROR	conftest.py:119	Intended error at /auth/register, method = POST, json = {'name': 'Poma', 'username': 'redokn', 'email': 'poma@example.com', 'password': '12345'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:55:39	tests	ERROR	conftest.py:119	Intended error at /auth/login/user, method = POST, json = {'username': 'ovrkill', 'password': '123'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:55:39	tests	ERROR	conftest.py:119	Intended error at /auth/login/admin, method = POST, json = {'name': 'King', 'password': 'apple', 'admin_secret': 'qqq'}, response status is 403, response content is 'Already logged in'
+
+2025-05-24 20:55:39	tests	INFO	conftest.py:130	Request to /auth/logout, method = POST, json = None, response status is 200, response content is '{"status":"success"}'
+
+2025-05-24 20:55:39	tests	ERROR	conftest.py:119	Intended error at /auth/logout, method = POST, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:55:39	tests	ERROR	conftest.py:119	Intended error at /auth/users/me, method = GET, json = None, response status is 401, response content is 'Authentication required for this path'
+
+2025-05-24 20:55:39	tests	ERROR	conftest.py:119	Intended error at /auth/admin/test, method = GET, json = None, response status is 401, response content is 'Authentication required for admin access.'
+
+2025-05-24 20:55:39	tests	ERROR	conftest.py:44	Unexpected error in test SQLAlchemyUoW: (sqlalchemy.dialects.postgresql.asyncpg.IntegrityError) <class 'asyncpg.exceptions.UniqueViolationError'>: duplicate key value violates unique constraint "users_username_key"
+DETAIL:  Key (username)=(ovrkill) already exists.
+[SQL: INSERT INTO users (username, name, hashed_password, email, active) VALUES ($1::VARCHAR, $2::VARCHAR, $3::BYTEA, $4::VARCHAR, $5::BOOLEAN) RETURNING users.id]
+[parameters: ('ovrkill', 'Poma', b'$2b$12$ex5KuSb2x.K/iQtcpPAcye8.kATFVuHmvF./rbeG1vZnq2YxdWmKq', 'secondpoma@example.com', True)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) 
+
+2025-05-24 20:55:39	tests	INFO	conftest.py:130	Request to auth/register, method = POST, json = {'name': 'Poma', 'username': 'ovrkill', 'email': 'secondpoma@example.com', 'password': 'secret'}, response status is 500, response content is '{"detail":"Database error occured"}'
+
