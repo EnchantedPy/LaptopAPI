@@ -6,7 +6,7 @@ from config.settings import SAppSettings
 from src.core.auth_service.utils import create_access_token, decode_jwt
 from src.core.auth_service.views import auth
 import uvicorn
-from src.core.exceptions.exceptions import DatabaseError
+from src.core.exceptions.exceptions import DatabaseDataException, DatabaseConfigurationException, DatabaseException, DatabaseIntegrityException, DatabaseOperationalException, S3ClientException, S3ConnectionException, S3Exception, S3NoCredentialsException, S3ParameterValidationException
 from src.entities.entities import TokenPayload
 from src.utils.UnitOfWork import SQLAlchemyUoW
 from src.utils.logger import logger
@@ -16,12 +16,85 @@ from starlette.middleware.base import BaseHTTPMiddleware
 app = FastAPI(title='Laptop API')
 app.include_router(auth)
 
-@app.exception_handler(DatabaseError)
-async def user_already_exists_handler(request: Request, exc: DatabaseError):
+
+# -------- S3 exception handlers --------
+
+@app.exception_handler(S3NoCredentialsException)
+async def no_credentials_s3_error_handler(request: Request, exc: S3NoCredentialsException):
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail}
     )
+
+
+@app.exception_handler(S3ConnectionException)
+async def connection_s3_error_handler(request: Request, exc: S3ConnectionException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+
+@app.exception_handler(S3Exception)
+async def s3_error_handler(request: Request, exc: S3Exception):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+
+@app.exception_handler(S3ClientException)
+async def client_s3_error_handler(request: Request, exc: S3ClientException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+
+@app.exception_handler(S3ParameterValidationException)
+async def param_validation_s3_error_handler(request: Request, exc: S3ParameterValidationException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+# -------- Database exception handlers --------
+
+@app.exception_handler(DatabaseException)
+async def db_error_hablder(request: Request, exc: DatabaseException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(DatabaseConfigurationException)
+async def configuration_db_error_handler(request: Request, exc: DatabaseConfigurationException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(DatabaseDataException)
+async def data_db_error_handler(request: Request, exc: DatabaseDataException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(DatabaseIntegrityException)
+async def integrity_db_error_handler(request: Request, exc: DatabaseIntegrityException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(DatabaseOperationalException)
+async def operational_db_error_handler(request: Request, exc: DatabaseOperationalException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
 
 def get_sqla_uow() -> SQLAlchemyUoW:
 	return SQLAlchemyUoW()

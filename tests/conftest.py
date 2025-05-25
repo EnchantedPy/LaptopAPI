@@ -1,6 +1,6 @@
 import pytest
 from fastapi import HTTPException
-from src.core.exceptions.exceptions import DatabaseError
+from src.core.exceptions.exceptions import DatabaseDataException, DatabaseConfigurationException, DatabaseException, DatabaseIntegrityException, DatabaseOperationalException
 from src.utils.logger import test_logger
 from src.utils.UnitOfWork import SQLAlchemyUoW
 from fastapi.testclient import TestClient
@@ -11,6 +11,13 @@ from config.TestSettings import STestSettings
 from src.repositories.laptop import LaptopRepository
 from src.repositories.user import UserRepository
 from src.repositories.user_activity import UserActivityRepository
+from sqlalchemy.exc import (
+	IntegrityError,
+	OperationalError,
+	DataError,
+	SQLAlchemyError,
+   ArgumentError
+)
 
 fake_engine = create_async_engine(STestSettings.test_pg_url, echo=True)
 fake_async_session_maker = async_sessionmaker(fake_engine, expire_on_commit=False)
@@ -27,25 +34,56 @@ class FakeSQLAlchemyUoW:
         await self._session.rollback()
 
     async def __aenter__(self):
-        self._session = self._session_factory()
-        self.users = UserRepository(self._session)
-        self.laptops = LaptopRepository(self._session)
-        self.user_activity = UserActivityRepository(self._session)
-        return self
+        try:
+            self._session = self._session_factory()
+            self.users = UserRepository(self._session)
+            self.laptops = LaptopRepository(self._session)
+            self.user_activity = UserActivityRepository(self._session)
+            return self
+        except OperationalError as e:
+            test_logger.error(f"OperationalError in SQLAlchemyUoW.__aenter__ (DB connection issue): {e}")
+            raise DatabaseOperationalException
+
+        except ArgumentError as e:
+            test_logger.error(f"ArgumentError in SQLAlchemyUoW.__aenter__ (Session/Engine config issue): {e}")
+            raise DatabaseConfigurationException
+
+        except SQLAlchemyError as e:
+            test_logger.error(f"Unhandled SQLAlchemyError in SQLAlchemyUoW.__aenter__: {e}")
+            raise DatabaseException
+
+        except Exception as e:
+            test_logger.critical(f"Critical unexpected error in SQLAlchemyUoW.__aenter__: {e}")
+            raise DatabaseException
 
     async def __aexit__(self, exc_type, exc_value, exc_tb):
         try:
-            if exc_type is None:
-                await self.commit()
-            else:
-                await self.rollback()
+            await self.commit()
+
+        except IntegrityError as e:
+            await self.rollback()
+            test_logger.error(f"An integrity error in SQLAlchemyUoW: {e}")
+            raise DatabaseIntegrityException
+
+        except DataError as e:
+            await self.rollback()
+            test_logger.error(f"Data error in SQLAlchemyUoW: {e}")
+            raise DatabaseDataException
+
+        except OperationalError as e:
+            await self.rollback()
+            test_logger.error(f"An operational error in SQLAlchemyUoW: {e}")
+            raise DatabaseOperationalException
+
+        except SQLAlchemyError as e:
+            await self.rollback()
+            test_logger.error(f"Unexpected SQLAlchemy error in SQLAlchemyUoW: {e}")
+            raise DatabaseException
+
         except Exception as e:
             await self.rollback()
-            test_logger.error(f"Unexpected error in test SQLAlchemyUoW: {e} \n")
-            raise DatabaseError
-        finally:
-            if self._session:
-                await self._session.close()
+            test_logger.error(f"Unexpected error in SQLAlchemyUoW: {e}")
+            raise DatabaseException
 
 
 def get_test_uow():
