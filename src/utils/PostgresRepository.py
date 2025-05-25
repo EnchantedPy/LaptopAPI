@@ -1,17 +1,13 @@
-from typing import Any, List, Optional, Type
+from typing import Any, List, Optional
 from src.interfaces.AbstractDatabase import DatabaseInterface
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from functools import singledispatchmethod
-from src.models.models import UserModel, LaptopTemplateModel, UserActivityModel
-from src.schemas.schemas import LaptopAddSchema, LaptopDeleteSchema, LaptopUpdateSchema, UserAddSchema, \
-    UserDeleteSchema, UserUpdateSchema, UserActivityAddSchema, UserActivityDeleteSchema
+from src.schemas.schemas import LaptopAddSchema, LaptopDeleteSchema, LaptopUpdateSchema, UserAddSchema, UserDeleteSchema, UserUpdateSchema, UserActivityAddSchema, UserActivityDeleteSchema
 from sqlalchemy.exc import SQLAlchemyError
 from functools import wraps
 from src.utils.logger import logger
-from src.models.models import Base
 from datetime import datetime
-from src.entities.entities import User
+from src.entities.entities import User, Laptop, UserActivity
 from sqlalchemy.orm import joinedload
 
 
@@ -36,10 +32,10 @@ class UserPostgresRepository(DatabaseInterface):
         self._session = _session
         
     @handle_exc
-    async def get_by_username(self, value: str, offset: int = 0, limit: int = 10) -> Optional[User]:
+    async def get_by_username(self, username: str, offset: int = 0, limit: int = 10) -> Optional[User]:
         query = (
             select(self.model)
-            .where(self.model.username == value)
+            .where(self.model.username == username)
             .limit(limit)
             .offset(offset)
             .options(
@@ -55,10 +51,10 @@ class UserPostgresRepository(DatabaseInterface):
         return None
 
     @handle_exc
-    async def get_by_name(self, value: str) -> List[User]:
+    async def get_by_name(self, name: str) -> List[User]:
         query = (
             select(self.model)
-            .where(self.model.name == value)
+            .where(self.model.name == name)
             .options(
                 joinedload(self.model.laptop_templates),
                 joinedload(self.model.user_activity)
@@ -72,10 +68,10 @@ class UserPostgresRepository(DatabaseInterface):
         return None
 
     @handle_exc
-    async def get_by_id(self, value: int) -> Optional[User]:
+    async def get_by_id(self, user_id: int) -> Optional[User]:
         query = (
             select(self.model)
-            .where(self.model.id == value)
+            .where(self.model.id == user_id)
             .options(
                 joinedload(self.model.laptop_templates),
                 joinedload(self.model.user_activity)
@@ -89,7 +85,7 @@ class UserPostgresRepository(DatabaseInterface):
         return None
 
     @handle_exc
-    async def get_all(self, offset: int = 0, limit: int = 10) -> List[User]:
+    async def get_all(self, offset: int, limit: int) -> List[User]:
         query = (
             select(self.model)
             .limit(limit)
@@ -138,10 +134,11 @@ class UserPostgresRepository(DatabaseInterface):
         query = select(self.model).where(self.model.id == data.user_id)
         result = await self._session.execute(query)
         user = result.scalar_one_or_none()
-        if user:
-            await self._session.delete(user)
-        else:
-            return None
+      #   if user:
+      #       await self._session.delete(user)
+      #   else:
+      #       return None
+        await self._session.delete(user)
         
     
 
@@ -153,16 +150,31 @@ class LaptopPostgresRepository(DatabaseInterface):
         self._session = _session
         
     @handle_exc
-    async def get_by_owner_id(self, value: int) -> LaptopTemplateModel:
-        query = select(self.model).where(self.model.user_id == value)
+    async def get_list_by_owner_id(self, user_id: int) -> List[Laptop]:
+        query = select(self.model).where(self.model.user_id == user_id)
         result = await self._session.execute(query)
-        return result.scalars().all()
+        db_laptops =  result.scalars().all()
+        return [Laptop.model_validate(laptop) for laptop in db_laptops]
     
     @handle_exc
-    async def get_all(self):
-        query = select(self.model)
+    async def get_by_id_and_owner_id(self, user_id: int, laptop_id: int) -> Optional[Laptop]:
+        query = select(self.model).where((self.model.user_id == user_id) & (self.model.id == laptop_id))
         result = await self._session.execute(query)
-        return result.scalars().all()
+        db_laptop = result.scalars().first()
+        if db_laptop:
+            return User.model_validate(db_laptop)
+        return None
+    
+    @handle_exc
+    async def get_all(self, limit: int, offset: int) -> List[Laptop]:
+        query = (
+            select(self.model)
+            .limit(limit)
+            .offset(offset)
+        )
+        result = await self._session.execute(query)
+        db_laptops =  result.scalars().all()
+        return [Laptop.model_validate(laptop) for laptop in db_laptops]
     
     @handle_exc
     async def add(self, data: LaptopAddSchema):
@@ -208,10 +220,11 @@ class LaptopPostgresRepository(DatabaseInterface):
         result = await self._session.execute(query)
         laptop_template = result.scalar_one_or_none()
         
-        if laptop_template:
-            await self._session.delete(laptop_template)
-        else:
-            return None
+      #   if laptop_template:
+      #       await self._session.delete(laptop_template)
+      #   else:
+      #       return None
+        await self._session.delete(laptop_template)
 
 
 class UserActivityPostgresRepository(DatabaseInterface):
@@ -221,22 +234,34 @@ class UserActivityPostgresRepository(DatabaseInterface):
         self._session = _session
 
     @handle_exc
-    async def get_by_user_id(self, value: int) -> Any:
-        query = select(self.model).where(self.model.user_id == value)
+    async def get_list_by_owner_id(self, user_id: int, offset: int, limit: int) -> List[UserActivity]:
+        query = select(self.model).where(self.model.user_id == user_id).limit(limit).offset(offset)
         result = await self._session.execute(query)
-        return result.scalars().all()
+        db_activities = result.scalars().all()
+        return [UserActivity.model_validate(db_activity) for db_activity in db_activities]
+    
+    @handle_exc
+    async def get_by_id_and_owner_id(self, user_id: int, activity_id: int):
+        query = select(self.model).where((self.model.id == activity_id) & (self.model.user_id == user_id))
+        result = await self._session.execute(query)
+        db_activity = result.scalars().first()
+        if db_activity:
+            return UserActivity.model_validate(db_activity)
+        return None
 
     @handle_exc
-    async def get_by_timestamp(self, value: datetime):
-        query = select(self.model).where(self.model.timestamp == value)
+    async def get_by_timestamp(self, timestamp: datetime, limit: int, offset: int):
+        query = select(self.model).where(self.model.timestamp == timestamp).limit(limit).offset(offset)
         result = await self._session.execute(query)
-        return result.scalars().all()
+        db_activities = result.scalars().all()
+        return [UserActivity.model_validate(db_activity) for db_activity in db_activities]
 
     @handle_exc
-    async def get_all(self, offset: int = 0, limit: int = 10) -> Any:
+    async def get_all(self, offset: int, limit: int) -> Any:
         query = select(self.model).offset(offset).limit(limit)
         result = await self._session.execute(query)
-        return result.scalars().all()
+        db_activities = result.scalars().all()
+        return [UserActivity.model_validate(db_activity) for db_activity in db_activities]
 
     @handle_exc
     async def add(self, data: UserActivityAddSchema):
@@ -250,7 +275,7 @@ class UserActivityPostgresRepository(DatabaseInterface):
 
     @handle_exc
     async def update(self, data: Any):
-        pass
+        raise NotImplemented('User activity doesn\'t have an update method')
 
     @handle_exc
     async def delete(self, data: UserActivityDeleteSchema):
@@ -258,10 +283,11 @@ class UserActivityPostgresRepository(DatabaseInterface):
         result = await self._session.execute(query)
         activity = result.scalar_one_or_none()
 
-        if activity:
-            await self._session.delete(activity)
-        else:
-            return None
+      #   if activity:
+      #       await self._session.delete(activity)
+      #   else:
+      #       return None
+        await self._session.delete(activity)
 
 
 

@@ -5,7 +5,7 @@ from jwt import ExpiredSignatureError, InvalidTokenError
 from config.settings import SAppSettings
 from src.core.auth_service.utils import create_access_token, decode_jwt
 from src.core.auth_service.views import auth
-from src.core.exceptions.exceptions import NoChangesProvidedException, NoResultsFoundException, UserNotFoundException
+from src.core.exceptions.exceptions import LaptopsNotFoundException, NoChangesProvidedException, UserNotFoundException, LaptopTemplatesLimitException, LaptopNotFoundException, ActivityNotFoundException
 import uvicorn
 from src.core.exceptions.exceptions import DatabaseDataException, DatabaseConfigurationException, DatabaseException, DatabaseIntegrityException, DatabaseOperationalException, S3ClientException, S3ConnectionException, S3Exception, S3NoCredentialsException, S3ParameterValidationException
 from src.entities.entities import TokenPayload
@@ -20,8 +20,29 @@ app.include_router(auth)
 
 # -------- Service exception handlers --------
 
-@app.exception_handler(NoResultsFoundException)
-async def no_credentials_s3_error_handler(request: Request, exc: NoResultsFoundException):
+@app.exception_handler(LaptopTemplatesLimitException)
+async def no_credentials_s3_error_handler(request: Request, exc: LaptopTemplatesLimitException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(ActivityNotFoundException)
+async def no_credentials_s3_error_handler(request: Request, exc: ActivityNotFoundException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(LaptopNotFoundException)
+async def no_credentials_s3_error_handler(request: Request, exc: LaptopNotFoundException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(LaptopsNotFoundException)
+async def no_credentials_s3_error_handler(request: Request, exc: LaptopsNotFoundException):
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail}

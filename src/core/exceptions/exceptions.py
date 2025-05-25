@@ -68,24 +68,38 @@ class S3ParameterValidationException(HTTPException):
 
 # --------- Service Errors -------
 
-class NoResultsFoundException(HTTPException):
-      def __init__(self):
+class ActivityNotFoundException(HTTPException):
+      def __init__(self, detail):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No result found for this request"
+            detail=detail
         )
         
 class UserNotFoundException(HTTPException):
-      def __init__(self):
+      def __init__(self, detail):
         super().__init__(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No user found"
+            detail=detail
         )
         
 class NoChangesProvidedException(HTTPException):
-      def __init__(self):
+      def __init__(self, detail):
         super().__init__(
             status_code=status.HTTP_204_NO_CONTENT,
-            detail="No changes provided to update"
+            detail=detail
+        )
+        
+class LaptopNotFoundException(HTTPException):
+      def __init__(self, detail):
+        super().__init__(
+            status_code=status.HTTP_204_NO_CONTENT,
+            detail=detail
+        )
+
+class LaptopTemplatesLimitException(HTTPException):
+      def __init__(self, detail):
+        super().__init__(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=detail
         )
 

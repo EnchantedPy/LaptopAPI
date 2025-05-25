@@ -14,23 +14,20 @@ class UserService:
             logger.info(f"User created with username: {data.username}")
             return result
 
-    async def get_all(self, uow: SQLAlchemyUoW):
+    async def get_all(self, uow: SQLAlchemyUoW, offset: int = 0, limit: int = 20):
         async with uow:
-            result = await uow.users.get_all()
-            if result:
-                logger.info("Fetched all users successfully.")
-                return result
-            logger.debug("No users found in database.")
-            raise NoResultsFoundException
+            result = await uow.users.get_all(offset, limit)
+            logger.info("Fetched all users successfully.")
+            return result
 
     async def get_by_name(self, uow: SQLAlchemyUoW, value: str):
         async with uow:
             result = await uow.users.get_by_name(value)
             if result:
-                logger.info(f"User fetched by name: {value}")
+                logger.info(f"Users fetched by name: {value}")
                 return result
-            logger.debug(f"No user found with name: {value}")
-            raise NoResultsFoundException
+            logger.debug(f"No users found with name: {value}")
+            raise NoResultsFoundException(f'No users found for \'name\': {value}')
 
     async def get_by_username(self, uow: SQLAlchemyUoW, value: str):
         async with uow:
@@ -39,7 +36,7 @@ class UserService:
                 logger.info(f"User fetched by username: {value}")
                 return result
             logger.debug(f"No user found with username: {value}")
-            raise UserNotFoundException
+            raise UserNotFoundException(f'No user found with username {value}')
 
     async def get_by_id(self, uow: SQLAlchemyUoW, value: int):
         async with uow:
@@ -48,20 +45,20 @@ class UserService:
                 logger.info(f"User fetched by ID: {value}")
                 return result
             logger.debug(f"No user found with ID: {value}")
-            raise UserNotFoundException
+            raise UserNotFoundException(f'No user found with ID {value}')
 
     async def update(self, uow: SQLAlchemyUoW, data: UserUpdateSchema):
         async with uow:
             existing_user_full_model = await uow.users.get_by_id(data.id)
             if not existing_user_full_model:
                 logger.warning(f"Update attempt for non-existent user ID: {data.id}")
-                raise UserNotFoundException
+                raise UserNotFoundException(f'No user found with ID {data.id}')
 
             update_data_dict = data.model_dump(exclude_unset=True, exclude={'id'})
 
             if not update_data_dict:
                 logger.debug(f"Update request for user ID {data.id} received with no updatable fields.")
-                raise NoChangesProvidedException
+                raise NoChangesProvidedException('No updatable fields provided for user update')
 
             has_actual_changes = False
             for field, new_value in update_data_dict.items():
@@ -72,7 +69,7 @@ class UserService:
 
             if not has_actual_changes:
                 logger.debug(f"Update request for user ID {data.id} had no actual changes.")
-                raise NoChangesProvidedException
+                raise NoChangesProvidedException('No changes provided for user update')
 
             result = await uow.users.update(data)
             logger.info(f"User with ID {data.id} successfully updated.")
@@ -86,4 +83,4 @@ class UserService:
                 logger.info(f"User with ID {data.id} successfully deleted.")
                 return result
             logger.warning(f"Delete attempt for non-existent user ID: {data.id}")
-            raise UserNotFoundException
+            raise UserNotFoundException(f'User not found with ID {data.id}')
