@@ -58,7 +58,8 @@ class FakeSQLAlchemyUoW:
 
     async def __aexit__(self, exc_type, exc_value, exc_tb):
         try:
-            await self.commit()
+            if exc_type is None:
+                 await self.commit()
 
         except IntegrityError as e:
             await self.rollback()

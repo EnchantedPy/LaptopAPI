@@ -5,6 +5,7 @@ from jwt import ExpiredSignatureError, InvalidTokenError
 from config.settings import SAppSettings
 from src.core.auth_service.utils import create_access_token, decode_jwt
 from src.core.auth_service.views import auth
+from src.core.exceptions.exceptions import NoChangesProvidedException, NoResultsFoundException, UserNotFoundException
 import uvicorn
 from src.core.exceptions.exceptions import DatabaseDataException, DatabaseConfigurationException, DatabaseException, DatabaseIntegrityException, DatabaseOperationalException, S3ClientException, S3ConnectionException, S3Exception, S3NoCredentialsException, S3ParameterValidationException
 from src.entities.entities import TokenPayload
@@ -16,6 +17,29 @@ from starlette.middleware.base import BaseHTTPMiddleware
 app = FastAPI(title='Laptop API')
 app.include_router(auth)
 
+
+# -------- Service exception handlers --------
+
+@app.exception_handler(NoResultsFoundException)
+async def no_credentials_s3_error_handler(request: Request, exc: NoResultsFoundException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(UserNotFoundException)
+async def no_credentials_s3_error_handler(request: Request, exc: UserNotFoundException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(NoChangesProvidedException)
+async def no_credentials_s3_error_handler(request: Request, exc: NoChangesProvidedException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
 
 # -------- S3 exception handlers --------
 
@@ -94,6 +118,9 @@ async def operational_db_error_handler(request: Request, exc: DatabaseOperationa
         status_code=exc.status_code,
         content={"detail": exc.detail}
     )
+
+
+# ------------ App ------------
 
 
 def get_sqla_uow() -> SQLAlchemyUoW:
