@@ -3,9 +3,23 @@ services:
     build: .
     image: app-image
     container_name: app-container
+    restart: always
     command: ["python", "main.py"]
     ports:
       - "8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/usr/bin/env",
+          "bash",
+          "-c",
+          "curl --fail http://app-container:8000/healthcheck || exit 1",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
     volumes:
       - .:/app
     depends_on:

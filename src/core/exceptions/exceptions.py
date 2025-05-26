@@ -102,4 +102,58 @@ class LaptopTemplatesLimitException(HTTPException):
             status_code=status.HTTP_409_CONFLICT,
             detail=detail
         )
+        
+class IncorrectSubmitPassword(HTTPException):
+     def __init__(self, detail):
+          super().__init__(
+               status_code=status.HTTP_409_CONFLICT,
+               detail=detail
+			 )
+        
+
+
+
+
+
+# class AlreadyLoggedInException(HTTPException):
+#     def __init__(self, detail: str):
+#         super().__init__(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             detail=detail
+#         )
+
+# class AuthRequiredException(HTTPException):
+#     def __init__(self, detail: str):
+#         super().__init__(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail=detail
+#         )
+
+# class AdminPrivilegesRequiredException(HTTPException):
+#     def __init__(self, detail: str):
+#         super().__init__(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             detail=detail
+#         )
+
+# class InvalidTokenException(HTTPException):
+#     def __init__(self, detail: str):
+#         super().__init__(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail=detail
+#         )
+
+# class FailedTokenRefreshException(HTTPException):
+#     def __init__(self, detail: str):
+#         super().__init__(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail=detail
+#         )
+
+# class NoValidTokensFoundException(HTTPException):
+#     def __init__(self, detail: str):
+#         super().__init__(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail=detail
+#         )
 

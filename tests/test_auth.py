@@ -118,5 +118,4 @@ def test_auth_middleware(http, get_cookies):
         'password': 'secret'
     })
     assert res.status_code != 200
-    #assert exc.value.status_code != 200
     

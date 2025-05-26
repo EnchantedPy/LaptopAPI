@@ -17,7 +17,7 @@ from src.utils.logger import logger
 from src.services.UserService import UserService
 from config.settings import SAppSettings
 
-auth = APIRouter(prefix='/auth', tags=['Auth'])
+AuthRouter = APIRouter(prefix='/auth', tags=['Auth'])
 
 
 '''
@@ -28,13 +28,13 @@ auth = APIRouter(prefix='/auth', tags=['Auth'])
 '''
 
 
-@auth.post('/register')
+@AuthRouter.post('/register')
 async def register(data: UserAddSchema, uow: SqlUoWDep):
 	await UserService().add(uow, data)
 	return {'status': 'success'}
 
 
-@auth.post('/login/user')
+@AuthRouter.post('/login/user')
 async def login_user(data: UserLoginSchema, uow: SqlUoWDep, response: Response):
 	user = await UserService().get_by_username(uow, data.username)
 	if not validate_password(data.password, user.hashed_password):
@@ -46,7 +46,7 @@ async def login_user(data: UserLoginSchema, uow: SqlUoWDep, response: Response):
 	return {'status': 'success'}
 
 
-@auth.post('/login/admin')
+@AuthRouter.post('/login/admin')
 async def login_user(data: AdminLoginSchema, response: Response):
 	if not data.password == SAppSettings.admin_password and not data.name == SAppSettings.admin_name and not data.admin_secret == SAppSettings.admin_secret:
 		raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect credentials')
@@ -56,17 +56,17 @@ async def login_user(data: AdminLoginSchema, response: Response):
 	response.set_cookie('Refresh-token', refresh_token)
 	return {'status': 'success'}
 
-@auth.post('/logout')
+@AuthRouter.post('/logout')
 async def logout(response: Response):
 	response.delete_cookie('Bearer-token')
 	response.delete_cookie('Refresh-token')
 	return {'status': 'success'}
 
-@auth.get('/users/me')
+@AuthRouter.get('/users/me')
 async def get_profile(request: Request):
      return {'payload': request.state.user_payload}
 
-@auth.get('/admin/test')
+@AuthRouter.get('/admin/test')
 async def test_admin_middleware():
      return {'msg': 'seems like you are admin'}
 

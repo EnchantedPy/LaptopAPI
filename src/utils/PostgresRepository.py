@@ -98,7 +98,7 @@ class UserPostgresRepository(DatabaseInterface):
         
 
     async def update(self, data: UserUpdateSchema):
-        query = select(self.model).where(self.model.id == data.user_id)
+        query = select(self.model).where(self.model.id == data.id)
         result = await self._session.execute(query)
         user = result.scalar_one_or_none()
         

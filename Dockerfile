@@ -17,4 +17,6 @@ RUN poetry install --no-interaction --no-root
 
 COPY . .
 
+RUN chmod +x healthcheck.sh
+
 EXPOSE 8000

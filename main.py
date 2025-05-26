@@ -4,8 +4,11 @@ from fastapi.responses import JSONResponse
 from jwt import ExpiredSignatureError, InvalidTokenError
 from config.settings import SAppSettings
 from src.core.auth_service.utils import create_access_token, decode_jwt
-from src.core.auth_service.views import auth
-from src.core.exceptions.exceptions import LaptopsNotFoundException, NoChangesProvidedException, UserNotFoundException, LaptopTemplatesLimitException, LaptopNotFoundException, ActivityNotFoundException
+from src.core.routers import apply_routers
+from src.core.exceptions.exceptions import (
+	IncorrectSubmitPassword, NoChangesProvidedException, UserNotFoundException, LaptopTemplatesLimitException, LaptopNotFoundException, ActivityNotFoundException,
+    #FailedTokenRefreshException, NoValidTokensFoundException, InvalidTokenException, AdminPrivilegesRequiredException, AlreadyLoggedInException, AuthRequiredException
+)
 import uvicorn
 from src.core.exceptions.exceptions import DatabaseDataException, DatabaseConfigurationException, DatabaseException, DatabaseIntegrityException, DatabaseOperationalException, S3ClientException, S3ConnectionException, S3Exception, S3NoCredentialsException, S3ParameterValidationException
 from src.entities.entities import TokenPayload
@@ -15,13 +18,62 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 
 app = FastAPI(title='Laptop API')
-app.include_router(auth)
+apply_routers(app)
 
 
 # -------- Service exception handlers --------
 
+# @app.exception_handler(FailedTokenRefreshException)
+# async def failed_token_refresh_handler(request: Request, exc: FailedTokenRefreshException):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"detail": exc.detail}
+#     )
+
+# @app.exception_handler(NoValidTokensFoundException)
+# async def no_valid_tokens_found_handler(request: Request, exc: NoValidTokensFoundException):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"detail": exc.detail}
+#     )
+
+# @app.exception_handler(InvalidTokenException)
+# async def invalid_or_expired_admin_token_handler(request: Request, exc: InvalidTokenException):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"detail": exc.detail}
+#     )
+
+# @app.exception_handler(AdminPrivilegesRequiredException)
+# async def admin_privileges_required_handler(request: Request, exc: AdminPrivilegesRequiredException):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"detail": exc.detail}
+#     )
+
+# @app.exception_handler(AlreadyLoggedInException)
+# async def already_logged_in_handler(request: Request, exc: AlreadyLoggedInException):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"detail": exc.detail}
+#     )
+
+# @app.exception_handler(AuthRequiredException)
+# async def auth_required_handler(request: Request, exc: AuthRequiredException):
+#     return JSONResponse(
+#         status_code=exc.status_code,
+#         content={"detail": exc.detail}
+#     )
+
 @app.exception_handler(LaptopTemplatesLimitException)
 async def no_credentials_s3_error_handler(request: Request, exc: LaptopTemplatesLimitException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(IncorrectSubmitPassword)
+async def no_credentials_s3_error_handler(request: Request, exc: IncorrectSubmitPassword):
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail}
@@ -36,13 +88,6 @@ async def no_credentials_s3_error_handler(request: Request, exc: ActivityNotFoun
 
 @app.exception_handler(LaptopNotFoundException)
 async def no_credentials_s3_error_handler(request: Request, exc: LaptopNotFoundException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(LaptopsNotFoundException)
-async def no_credentials_s3_error_handler(request: Request, exc: LaptopsNotFoundException):
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail}
@@ -151,7 +196,9 @@ def get_sqla_uow() -> SQLAlchemyUoW:
 PUBLIC_PATHS = {"/", "/docs", "/openapi.json", "/redoc"}
 ADMIN_PATHS = {"/auth/admin/test"}
 UNAUTHENTICATED_ONLY_PATHS = {"/auth/login/admin", "/auth/login/user", "/auth/register"}
-AUTHENTICATED_ONLY_PATHS = {"/auth/logout", "/auth/users/me"}
+AUTHENTICATED_ONLY_PATHS = {"/auth/logout", "/auth/users/me" "/account/self", "/account/self/update", "/account/delete", "/account/activity", "/account/laptops"}
+
+# rm /auth/users/me && /auth/admin/test
 
 async def auth_middleware(
     request: Request,
@@ -165,78 +212,72 @@ async def auth_middleware(
     current_payload: Optional[TokenPayload] = None
     new_access_token: Optional[str] = None
 
-    # Attempt to decode access token to determine if user is logged in
     if access_token:
         try:
             current_payload = decode_jwt(access_token)
         except (ExpiredSignatureError, InvalidTokenError):
-            pass  # We will try refresh token or deny access later if needed
+            pass
 
-    # --- Horizontal Rule ---
-    ## 1. Handle Unauthenticated-Only Paths
-
+    # Handle Unauthenticated-Only Paths
     if path in UNAUTHENTICATED_ONLY_PATHS:
         if current_payload:
             logger.info(f"Logged-in user {current_payload.get('sub')} attempted to access {path}")
-            # You might want to redirect to a user dashboard or home page
-            # For simplicity, we'll raise an error, but a redirect is better UX
-            raise HTTPException(
+            
+            return JSONResponse(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Already logged in",
+                content={"detail": 'Already logged in'}
             )
+
         logger.debug(f"Path {path} is for unauthenticated users. Proceeding.")
         return await call_next(request)
     
-    ## 2. Handle Public Paths
+    # Handle Public Paths
     if path in PUBLIC_PATHS:
         logger.debug(f"Path {path} is public. Skipping authentication.")
         return await call_next(request)
 
-    ## 3. Handle Logout Path
+    # Authenticated path request with no tokens
     if path in AUTHENTICATED_ONLY_PATHS:
         if not access_token and not refresh_token:
             logger.warning(f"Unauthenticated user attempted to access {path}.")
-            raise HTTPException(
+            
+            return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='Authentication required for this path'
+                content={"detail": 'Authentication required to access'}
             )
-        # If they have tokens, they can proceed to logout logic which will invalidate them
-        logger.debug(f"Authenticated user attempting to log out from {path}.")
-        # No return here, let the rest of the middleware try to validate access if needed,
-        # or proceed to the logout endpoint directly if tokens exist.
-        
-    ## 4. Handle Admin Paths
 
+        logger.debug(f"Authenticated user attempting to access authenticated path {path}.")
+        
+    # Handle Admin Paths
     if path in ADMIN_PATHS:
         if not access_token:
-            logger.warning(f"Admin path {path} accessed without access token.")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='Authentication required for admin access.'
+            logger.warning(f"Admin path {path} request without access token.")
+            
+            return JSONResponse(
+                status_code=status.HTTP_403_FORBIDDEN,
+                content={"detail": 'Admin privileges required'}
             )
         try:
             current_payload = decode_jwt(access_token)
             if current_payload.get('role') != 'admin':
                 logger.warning(f"User {current_payload.get('sub')} attempted admin access to {path} without admin role.")
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail='Access denied. Admin privileges required.'
+                
+                return JSONResponse(
+                		status_code=status.HTTP_403_FORBIDDEN,
+                		content={"detail": 'Admin privileges required'}
                 )
-            logger.debug(f"Admin access token valid for user {current_payload['sub']} to {path}.")
+            logger.debug(f"Admin access token valid for user {current_payload.get('sub')} to {path}.")
 
         except (ExpiredSignatureError, InvalidTokenError) as e:
             logger.warning(f"Admin access token invalid or expired for {path}: {e}.")
-            raise HTTPException(
+            
+            return JSONResponse(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f'Authentication required for admin access. Token invalid or expired: {e}'
-            )
+                content={"detail": 'Admin access token invalid or expired'}
+                     )
         
-    ## 5. Handle General Authenticated Paths
-
-
-    # If path is not public, unauthenticated-only, or admin-specific, it implies general authenticated access
+    # Handle General Authenticated Paths
     else:
-        # If current_payload is still None (meaning access token was missing or invalid) and a refresh token exists
         if not current_payload and refresh_token:
             try:
                 payload = decode_jwt(refresh_token)
@@ -245,45 +286,44 @@ async def auth_middleware(
                 uow = get_sqla_uow()
                 async with uow:
                     user = await uow.users.get_by_id(user_id)
-                    if user: # Ensure user exists in DB
+                    if user:
                         new_access_token = create_access_token(user)
                         current_payload = decode_jwt(new_access_token)
                         logger.info(f"Access token refreshed for user {current_payload.get('sub')}.")
                     else:
-                        raise InvalidTokenError("User not found for refresh token")
+                        raise UserNotFoundException('User not found to refresh access token')
             except InvalidTokenError as e:
-                logger.warning(f"Failed to refresh token: {e}. Clearing tokens.")
-                # If refresh token is invalid, clear both to force re-login
-                response = Response(status_code=status.HTTP_401_UNAUTHORIZED, detail='Authentication required. Failed to refresh token.')
+                logger.warning(f"Failed to refresh token. Clearing tokens.")
                 response.delete_cookie(key="Bearer-token")
                 response.delete_cookie(key="Refresh-token")
-                raise HTTPException(
+                
+                return JSONResponse(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail=f'Authentication required. Failed to refresh token: {e}'
-                )
+                    content={"detail": 'Couldn\'t refresh access token'}
+                           )
+            
             except Exception as e:
                 logger.error(f"Unexpected error during refresh token processing: {e}")
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail='Internal server error during refreshing access token'
-                )
+                return JSONResponse(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    content={"detail": 'Couldn\'t refresh access token'}
+                           )
 
-    ## 6. Final Check and Request State Update
-
+    #Final Check and Request State Update
     if not current_payload:
         logger.warning(f"No valid tokens found for path {path}. Unauthorized access attempt.")
-        raise HTTPException(
+        return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Authentication required. No valid tokens found.'
-        )
+            content={"detail": 'No valid tokens found, access denied'}
+                )
 
-    request.state.user_id = current_payload['sub']
+    request.state.user_id = current_payload.get('sub')
     request.state.user_payload = current_payload
     request.state.user_role = current_payload.get('role')
 
     response = await call_next(request)
 
-    ## 7. Set New Access Token if Refreshed
+    #Set New Access Token if Refreshed
 
     if new_access_token:
         response.set_cookie(
@@ -307,8 +347,8 @@ app.add_middleware(BaseHTTPMiddleware, dispatch=auth_middleware)
 def healthcheck():
     return {'Status': 'healthy'}
 
-@app.get('/errors')
-def errors():
+@app.get('/error', tags=['Troubleshoot'])
+def error():
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
         detail='This is an autoerror endpoint'

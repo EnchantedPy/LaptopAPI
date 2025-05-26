@@ -1,8 +1,8 @@
-from src.core.exceptions.exceptions import NoChangesProvidedException, UserNotFoundException
-from src.schemas.schemas import UserAddSchema, UserDeleteSchema, UserUpdateSchema
+from src.core.exceptions.exceptions import IncorrectSubmitPassword, NoChangesProvidedException, UserNotFoundException
+from src.schemas.schemas import UserAddSchema, UserDeleteSchema, UserUpdateInternalSchema, UserUpdateSchema
 from src.utils.UnitOfWork import SQLAlchemyUoW
 from src.utils.logger import logger
-from src.core.auth_service.utils import hash_password
+from src.core.auth_service.utils import hash_password, validate_password
 
 
 class UserService:
@@ -44,32 +44,52 @@ class UserService:
             logger.debug(f"No user found with ID: {user_id}")
             raise UserNotFoundException(f'No user found with ID {user_id}')
 
-    async def update(self, uow: SQLAlchemyUoW, data: UserUpdateSchema):
+    async def update(self, uow: SQLAlchemyUoW, data: UserUpdateInternalSchema):
         async with uow:
             existing_user_full_model = await uow.users.get_by_id(data.id)
+            
             if not existing_user_full_model:
-                logger.warning(f"Update attempt for non-existent user ID: {data.id}")
-                raise UserNotFoundException(f'No user found with ID {data.id}')
-
-            update_data_dict = data.model_dump(exclude_unset=True, exclude={'id'})
-
+                 logger.warning(f"Update attempt for non-existent user ID: {data.id}")
+                 raise UserNotFoundException(f'No user found with ID {data.id}')
+            
+            if data.submit_password:
+                 if not validate_password(data.submit_password, existing_user_full_model.hashed_password):
+                      logger.warning(f"Incorrect submit password for user ID: {data.id}")
+                      raise IncorrectSubmitPassword('Provided submit password is incorrect')
+                 
+            update_data_dict = data.model_dump(
+                exclude_unset=True, 
+                exclude={'id', 'submit_password', 'repeat_password'}
+            )
+            
             if not update_data_dict:
-                logger.debug(f"Update request for user ID {data.id} received with no updatable fields.")
-                raise NoChangesProvidedException('No updatable fields provided for user update')
-
+                 logger.debug(f"Update request for user ID {data.id} received with no updatable fields.")
+                 raise NoChangesProvidedException('No updatable fields provided for user update')
+            
+            if 'password' in update_data_dict:
+                 hashed_password = hash_password(update_data_dict['password'])
+                 update_data_dict['hashed_password'] = hashed_password
+                 del update_data_dict['password']
+                 
             has_actual_changes = False
             for field, new_value in update_data_dict.items():
-                current_value = getattr(existing_user_full_model, field, None)
-                if current_value != new_value:
-                    has_actual_changes = True
-                    break
-
+                 current_value = getattr(existing_user_full_model, field, None)
+                 if current_value != new_value:
+                      has_actual_changes = True
+                      break
+                 
             if not has_actual_changes:
-                logger.debug(f"Update request for user ID {data.id} had no actual changes.")
-                raise NoChangesProvidedException('No changes provided for user update')
-
-            result = await uow.users.update(data)
-            logger.info(f"User with ID {data.id} successfully updated.")
+                 logger.debug(f"Update request for user ID {data.id} had no actual changes.")
+                 raise NoChangesProvidedException('No changes provided for user update')
+            
+            final_update_data = UserUpdateSchema(
+                id=data.id,
+                **update_data_dict
+            )
+            
+            result = await uow.users.update(final_update_data)
+            logger.info(f"User with ID {data.id} successfully updated. Changed fields: {list(update_data_dict.keys())}")
+            
             return result
 
     async def delete(self, uow: SQLAlchemyUoW, data: UserDeleteSchema):
