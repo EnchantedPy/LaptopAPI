@@ -11,27 +11,12 @@ from src.entities.entities import User, Laptop, UserActivity
 from sqlalchemy.orm import joinedload
 
 
-def handle_exc(func):
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        try:
-            return await func(*args, **kwargs)
-        except SQLAlchemyError as e:
-            logger.error(f"Database error in {func.__name__}: {e}")
-            raise e
-        except Exception as e:
-            logger.error(f"Unexdected error in {func.__name__}: {e}")
-            raise e
-    return wrapper
-
-
 class UserPostgresRepository(DatabaseInterface):
     model = None
     
     def __init__(self, _session: AsyncSession):
         self._session = _session
         
-    @handle_exc
     async def get_by_username(self, username: str, offset: int = 0, limit: int = 10) -> Optional[User]:
         query = (
             select(self.model)
@@ -50,7 +35,7 @@ class UserPostgresRepository(DatabaseInterface):
             return User.model_validate(db_user)
         return None
 
-    @handle_exc
+
     async def get_by_name(self, name: str) -> List[User]:
         query = (
             select(self.model)
@@ -67,7 +52,7 @@ class UserPostgresRepository(DatabaseInterface):
             return [User.model_validate(db_user) for db_user in db_users]
         return None
 
-    @handle_exc
+
     async def get_by_id(self, user_id: int) -> Optional[User]:
         query = (
             select(self.model)
@@ -84,7 +69,7 @@ class UserPostgresRepository(DatabaseInterface):
             return User.model_validate(db_user)
         return None
 
-    @handle_exc
+
     async def get_all(self, offset: int, limit: int) -> List[User]:
         query = (
             select(self.model)
@@ -100,7 +85,7 @@ class UserPostgresRepository(DatabaseInterface):
 
         return [User.model_validate(user) for user in db_users]
     
-    @handle_exc
+
     async def add(self, data: UserAddSchema):
         new_user = self.model(
             name=data.name,
@@ -111,7 +96,7 @@ class UserPostgresRepository(DatabaseInterface):
         )
         self._session.add(new_user)
         
-    @handle_exc
+
     async def update(self, data: UserUpdateSchema):
         query = select(self.model).where(self.model.id == data.user_id)
         result = await self._session.execute(query)
@@ -129,7 +114,7 @@ class UserPostgresRepository(DatabaseInterface):
         else:
             return None
         
-    @handle_exc
+
     async def delete(self, data: UserDeleteSchema):
         query = select(self.model).where(self.model.id == data.user_id)
         result = await self._session.execute(query)
@@ -149,14 +134,13 @@ class LaptopPostgresRepository(DatabaseInterface):
     def __init__(self, _session: AsyncSession):
         self._session = _session
         
-    @handle_exc
     async def get_list_by_owner_id(self, user_id: int) -> List[Laptop]:
         query = select(self.model).where(self.model.user_id == user_id)
         result = await self._session.execute(query)
         db_laptops =  result.scalars().all()
         return [Laptop.model_validate(laptop) for laptop in db_laptops]
     
-    @handle_exc
+
     async def get_by_id_and_owner_id(self, user_id: int, laptop_id: int) -> Optional[Laptop]:
         query = select(self.model).where((self.model.user_id == user_id) & (self.model.id == laptop_id))
         result = await self._session.execute(query)
@@ -165,7 +149,7 @@ class LaptopPostgresRepository(DatabaseInterface):
             return User.model_validate(db_laptop)
         return None
     
-    @handle_exc
+
     async def get_all(self, limit: int, offset: int) -> List[Laptop]:
         query = (
             select(self.model)
@@ -176,7 +160,7 @@ class LaptopPostgresRepository(DatabaseInterface):
         db_laptops =  result.scalars().all()
         return [Laptop.model_validate(laptop) for laptop in db_laptops]
     
-    @handle_exc
+
     async def add(self, data: LaptopAddSchema):
         new_laptop = self.model(
             user_id=data.user_id,
@@ -188,7 +172,7 @@ class LaptopPostgresRepository(DatabaseInterface):
 		  )
         self._session.add(new_laptop)
         
-    @handle_exc
+
     async def update(self, data: LaptopUpdateSchema):
         query = select(self.model).where(
     		(self.model.user_id == data.user_id) & (self.model.id == data.laptop_id)
@@ -212,7 +196,7 @@ class LaptopPostgresRepository(DatabaseInterface):
         else:
             return None
         
-    @handle_exc
+
     async def delete(self, data: LaptopDeleteSchema):
         query = select(self.model).where(
     		(self.model.user_id == data.user_id) & (self.model.id == data.laptop_id)
@@ -233,14 +217,14 @@ class UserActivityPostgresRepository(DatabaseInterface):
     def __init__(self, _session: AsyncSession):
         self._session = _session
 
-    @handle_exc
+
     async def get_list_by_owner_id(self, user_id: int, offset: int, limit: int) -> List[UserActivity]:
         query = select(self.model).where(self.model.user_id == user_id).limit(limit).offset(offset)
         result = await self._session.execute(query)
         db_activities = result.scalars().all()
         return [UserActivity.model_validate(db_activity) for db_activity in db_activities]
     
-    @handle_exc
+
     async def get_by_id_and_owner_id(self, user_id: int, activity_id: int):
         query = select(self.model).where((self.model.id == activity_id) & (self.model.user_id == user_id))
         result = await self._session.execute(query)
@@ -249,21 +233,21 @@ class UserActivityPostgresRepository(DatabaseInterface):
             return UserActivity.model_validate(db_activity)
         return None
 
-    @handle_exc
+
     async def get_by_timestamp(self, timestamp: datetime, limit: int, offset: int):
         query = select(self.model).where(self.model.timestamp == timestamp).limit(limit).offset(offset)
         result = await self._session.execute(query)
         db_activities = result.scalars().all()
         return [UserActivity.model_validate(db_activity) for db_activity in db_activities]
 
-    @handle_exc
+
     async def get_all(self, offset: int, limit: int) -> Any:
         query = select(self.model).offset(offset).limit(limit)
         result = await self._session.execute(query)
         db_activities = result.scalars().all()
         return [UserActivity.model_validate(db_activity) for db_activity in db_activities]
 
-    @handle_exc
+
     async def add(self, data: UserActivityAddSchema):
         new_user_activity = self.model(
             user_id=data.user_id,
@@ -273,11 +257,11 @@ class UserActivityPostgresRepository(DatabaseInterface):
         )
         self._session.add(new_user_activity)
 
-    @handle_exc
+
     async def update(self, data: Any):
         raise NotImplemented('User activity doesn\'t have an update method')
 
-    @handle_exc
+
     async def delete(self, data: UserActivityDeleteSchema):
         query = select(self.model).where((self.model.user_id == data.user_id) & (self.model.id == data.activity_id))
         result = await self._session.execute(query)

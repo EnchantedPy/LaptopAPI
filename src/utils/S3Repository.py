@@ -9,35 +9,18 @@ from src.utils.logger import logger
 from src.utils.helpers import json_to_dict
 
 
-def handle_exc(func):
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        try:
-            return await func(*args, **kwargs)
-        except BotoCoreError as e:
-            logger.error(f"AioBotoCore error in {func.__name__}: {e}")
-            raise e
-        except Exception as e:
-            logger.error(f"Unexpected error in {func.__name__}: {e}")
-            raise e
-    return wrapper
-
-
-class S3JsonDataRepository(StorageInterface):
+class S3Repository(StorageInterface):
     bucket_name = None
 
     def __init__(self, _client: AioBaseClient):
         self._client = _client
 
-    @handle_exc
     async def put(self, object_name: str, data: Any) -> None:
          json_bytes = json.dumps(data, indent=4, ensure_ascii=False).encode('utf-8')
          byte_stream = BytesIO(json_bytes)
          
          await self._client.put_object(Bucket=self.bucket_name, Key=object_name, Body=byte_stream)
     
-
-    @handle_exc
     async def get(self, object_name: str) -> Any:
         response = await self._client.get_object(Bucket=self.bucket_name, Key=object_name)
         raw_bytes = await response['Body'].read()
@@ -45,11 +28,9 @@ class S3JsonDataRepository(StorageInterface):
         dict_data = await json_to_dict(data)
         return dict_data
 
-    @handle_exc
     async def delete(self, object_name: str) -> None:
         await self._client.delete_object(Bucket=self.bucket_name, Key=object_name)
 
-    @handle_exc
     async def get_all(self) -> list[str]:
         keys = []
         continuation_token = None

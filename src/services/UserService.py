@@ -1,4 +1,4 @@
-from src.core.exceptions.exceptions import NoChangesProvidedException, NoResultsFoundException, UserNotFoundException
+from src.core.exceptions.exceptions import NoChangesProvidedException, UserNotFoundException
 from src.schemas.schemas import UserAddSchema, UserDeleteSchema, UserUpdateSchema
 from src.utils.UnitOfWork import SQLAlchemyUoW
 from src.utils.logger import logger
@@ -20,32 +20,29 @@ class UserService:
             logger.info("Fetched all users successfully.")
             return result
 
-    async def get_by_name(self, uow: SQLAlchemyUoW, value: str):
+    async def get_by_name(self, uow: SQLAlchemyUoW, name: str):
         async with uow:
-            result = await uow.users.get_by_name(value)
-            if result:
-                logger.info(f"Users fetched by name: {value}")
-                return result
-            logger.debug(f"No users found with name: {value}")
-            raise NoResultsFoundException(f'No users found for \'name\': {value}')
+            result = await uow.users.get_by_name(name)
+            logger.info(f"Users fetched by name: {name}")
+            return result
 
-    async def get_by_username(self, uow: SQLAlchemyUoW, value: str):
+    async def get_by_username(self, uow: SQLAlchemyUoW, username: str):
         async with uow:
-            result = await uow.users.get_by_username(value)
+            result = await uow.users.get_by_username(username)
             if result:
-                logger.info(f"User fetched by username: {value}")
+                logger.info(f"User fetched by username: {username}")
                 return result
-            logger.debug(f"No user found with username: {value}")
-            raise UserNotFoundException(f'No user found with username {value}')
+            logger.debug(f"No user found with username: {username}")
+            raise UserNotFoundException(f'No user found with username {username}')
 
-    async def get_by_id(self, uow: SQLAlchemyUoW, value: int):
+    async def get_by_id(self, uow: SQLAlchemyUoW, user_id: int):
         async with uow:
-            result = await uow.users.get_by_id(value)
+            result = await uow.users.get_by_id(user_id)
             if result:
-                logger.info(f"User fetched by ID: {value}")
+                logger.info(f"User fetched by ID: {user_id}")
                 return result
-            logger.debug(f"No user found with ID: {value}")
-            raise UserNotFoundException(f'No user found with ID {value}')
+            logger.debug(f"No user found with ID: {user_id}")
+            raise UserNotFoundException(f'No user found with ID {user_id}')
 
     async def update(self, uow: SQLAlchemyUoW, data: UserUpdateSchema):
         async with uow:

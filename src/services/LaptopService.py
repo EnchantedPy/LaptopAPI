@@ -18,7 +18,7 @@ class LaptopService:
 		
 	async def get_all(self, uow: SQLAlchemyUoW, offset: int = 20, limit: int = 0):
 		async with uow:
-			result = await uow.laptops.get_all()
+			result = await uow.laptops.get_all(limit, offset)
 			return result
 		
 	async def get_list_for_user(self, uow: SQLAlchemyUoW, user_id: int):

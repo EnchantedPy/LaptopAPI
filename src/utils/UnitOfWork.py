@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from redis.asyncio import Redis, from_url
 from src.core.exceptions.exceptions import DatabaseDataException, DatabaseConfigurationException, DatabaseException, DatabaseIntegrityException, DatabaseOperationalException, S3ClientException, S3ConnectionException, S3Exception, S3NoCredentialsException, S3ParameterValidationException
 from src.db.realtional_db import async_session_maker
 from src.repositories.user import UserRepository

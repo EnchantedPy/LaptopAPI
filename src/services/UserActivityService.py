@@ -26,7 +26,7 @@ class UserActivityService:
 
     async def get_by_timestamp(self, uow: SQLAlchemyUoW, timestamp: datetime, limit: int = 20, offset: int = 0) -> List[UserActivity]:
         async with uow:
-            result = await uow.user_activity.get_by_timestamp(timestamp)
+            result = await uow.user_activity.get_by_timestamp(timestamp, limit, offset)
             return result
 
     async def get_all(self, uow: SQLAlchemyUoW, offset: int = 0, limit: int = 20) -> List[UserActivityModel]:
