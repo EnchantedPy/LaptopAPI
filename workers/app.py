@@ -1,5 +1,5 @@
 from celery import Celery
-from config.settings import SAppSettings
+from config.settings import Settings
 
 
-app = Celery(name='worker', broker=SAppSettings.rmq_url) # in docker localhost ch to rabbitmq (container name)
+app = Celery(name='worker', broker=SAppSettings.rmq_url)

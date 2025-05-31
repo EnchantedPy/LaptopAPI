@@ -9,20 +9,20 @@ class Base(DeclarativeBase):
     pass
 
 
-class UserModel(Base):
+class UserOrm(Base):
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String, unique=True)
-    name: Mapped[str]
     hashed_password: Mapped[bytes]
     email: Mapped[str] = mapped_column(String, unique=True)
     active: Mapped[bool]
-    laptop_templates: Mapped[list['LaptopTemplateModel']] = relationship('LaptopTemplateModel', back_populates='user')
-    user_activity: Mapped[list['UserActivityModel']] = relationship('UserActivityModel', back_populates='user')
+	 role: Mapped[str]
+    laptops: Mapped[list['LaptopOrm']] = relationship('LaptopOrm', back_populates='user')
+    activities: Mapped[list['ActvityOrm']] = relationship('ActvityOrm', back_populates='user')
     
 
-class LaptopTemplateModel(Base):
+class LaptopOrm(Base):
     __tablename__ = 'laptops'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -30,19 +30,22 @@ class LaptopTemplateModel(Base):
     brand: Mapped[str]
     cpu: Mapped[str]
     gpu: Mapped[str]
+	 igpu: Mapped[str]
+	 ram: Mapped[int]
+	 storage: Mapped[int]
+	 diagonal: Mapped[float]
     min_price: Mapped[int]
     max_price: Mapped[int]
 
-    user: Mapped[UserModel] = relationship('UserModel', back_populates='laptop_templates')
+    user: Mapped[UserOrm] = relationship('UserOrm', back_populates='laptops')
 
 
-class UserActivityModel(Base):
-    __tablename__ = 'user_activity'
+class ActivityOrm(Base):
+    __tablename__ = 'activities'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    action: Mapped[str]
-    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     detail: Mapped[str]
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
-    user: Mapped[UserModel] = relationship('UserModel', back_populates='user_activity')
+    user: Mapped[UserOrm] = relationship('UserOrm', back_populates='activities')

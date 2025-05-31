@@ -40,3 +40,55 @@
 2025-05-26 17:27:15	Logger	DEBUG	main.py:249	Authenticated user attempting to access authenticated path /account/self/update.
 2025-05-26 17:27:15	Logger	INFO	UserService.py:91	User with ID 2 successfully updated. Changed fields: ['name', 'username', 'email', 'hashed_password']
 2025-05-26 17:28:39	Logger	INFO	UserService.py:42	User fetched by ID: 2
+2025-05-27 10:33:09	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:33:09	Logger	INFO	UserService.py:14	User created with username: ovrkill
+2025-05-27 10:33:09	Logger	DEBUG	main.py:231	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-27 10:33:09	Logger	INFO	UserService.py:33	User fetched by username: ovrkill
+2025-05-27 10:33:09	Logger	INFO	UserService.py:42	User fetched by ID: 1
+2025-05-27 10:33:09	Logger	DEBUG	main.py:249	Authenticated user attempting to access authenticated path /account/self/update.
+2025-05-27 10:33:10	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:33:10	Logger	INFO	UserService.py:14	User created with username: ovrkill
+2025-05-27 10:33:56	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:33:56	Logger	INFO	UserService.py:14	User created with username: ovrkill
+2025-05-27 10:33:56	Logger	DEBUG	main.py:231	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-27 10:33:56	Logger	INFO	UserService.py:33	User fetched by username: ovrkill
+2025-05-27 10:33:57	Logger	INFO	UserService.py:42	User fetched by ID: 1
+2025-05-27 10:33:57	Logger	DEBUG	main.py:249	Authenticated user attempting to access authenticated path /account/self/update.
+2025-05-27 10:33:57	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:33:57	Logger	INFO	UserService.py:14	User created with username: ovrkill
+2025-05-27 10:34:38	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:34:38	Logger	INFO	UserService.py:14	User created with username: ovrkill
+2025-05-27 10:34:38	Logger	DEBUG	main.py:231	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-27 10:34:38	Logger	INFO	UserService.py:33	User fetched by username: ovrkill
+2025-05-27 10:34:38	Logger	INFO	UserService.py:42	User fetched by ID: 1
+2025-05-27 10:34:38	Logger	DEBUG	main.py:249	Authenticated user attempting to access authenticated path /account/self/update.
+2025-05-27 10:35:17	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:35:18	Logger	INFO	UserService.py:14	User created with username: ovrkill
+2025-05-27 10:35:18	Logger	DEBUG	main.py:231	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-27 10:35:18	Logger	INFO	UserService.py:33	User fetched by username: ovrkill
+2025-05-27 10:35:18	Logger	INFO	UserService.py:42	User fetched by ID: 1
+2025-05-27 10:35:18	Logger	DEBUG	main.py:249	Authenticated user attempting to access authenticated path /account/self/update.
+2025-05-27 10:35:18	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:35:19	Logger	INFO	UserService.py:14	User created with username: ovrkill
+2025-05-27 10:37:51	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:37:51	Logger	INFO	UserService.py:14	User created with username: oovrkill
+2025-05-27 10:37:51	Logger	DEBUG	main.py:231	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-27 10:37:51	Logger	INFO	UserService.py:33	User fetched by username: oovrkill
+2025-05-27 10:37:52	Logger	INFO	UserService.py:42	User fetched by ID: 1
+2025-05-27 10:37:52	Logger	DEBUG	main.py:249	Authenticated user attempting to access authenticated path /account/self/update.
+2025-05-27 10:37:52	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:37:52	Logger	INFO	UserService.py:14	User created with username: ovrkill
+2025-05-27 10:37:52	Logger	DEBUG	main.py:231	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-27 10:37:52	Logger	INFO	UserService.py:33	User fetched by username: ovrkill
+2025-05-27 10:37:53	Logger	INFO	main.py:224	Logged-in user 2 attempted to access /auth/register
+2025-05-27 10:38:29	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:38:29	Logger	INFO	UserService.py:14	User created with username: oovrkill
+2025-05-27 10:38:29	Logger	DEBUG	main.py:231	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-27 10:38:29	Logger	INFO	UserService.py:33	User fetched by username: oovrkill
+2025-05-27 10:38:29	Logger	INFO	UserService.py:42	User fetched by ID: 1
+2025-05-27 10:38:29	Logger	DEBUG	main.py:249	Authenticated user attempting to access authenticated path /account/self/update.
+2025-05-27 10:38:30	Logger	DEBUG	main.py:231	Path /auth/register is for unauthenticated users. Proceeding.
+2025-05-27 10:38:30	Logger	INFO	UserService.py:14	User created with username: ovrkill
+2025-05-27 10:38:30	Logger	DEBUG	main.py:231	Path /auth/login/user is for unauthenticated users. Proceeding.
+2025-05-27 10:38:30	Logger	INFO	UserService.py:33	User fetched by username: ovrkill
+2025-05-27 10:38:30	Logger	INFO	main.py:224	Logged-in user 2 attempted to access /auth/register

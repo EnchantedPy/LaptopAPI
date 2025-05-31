@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 from aiobotocore.session import get_session
-from config.settings import SAppSettings
+from config.settings import Settings
 from aiobotocore.client import AioBaseClient
 from contextlib import _AsyncGeneratorContextManager
 
@@ -21,4 +21,4 @@ class s3_clientmaker:
 	async def __call__(self) -> _AsyncGeneratorContextManager[AioBaseClient]:
 		 return self.get_client()
 
-s3_client_maker = s3_clientmaker(SAppSettings.s3_config, SAppSettings.s3_bucket_name)
+s3_client_maker = s3_clientmaker(Settings.s3_config, Settings.s3_bucket_name)

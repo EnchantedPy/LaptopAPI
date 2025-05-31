@@ -22,6 +22,16 @@ from sqlalchemy.exc import (
 fake_engine = create_async_engine(STestSettings.test_pg_url, echo=True)
 fake_async_session_maker = async_sessionmaker(fake_engine, expire_on_commit=False)
 
+
+@pytest.fixture
+def user():
+    return {
+        'name': 'Danila',
+        'username': 'oovrkill',
+        'email': 'ddanila@example.com',
+        'password': '123'
+    }
+
         
 class FakeSQLAlchemyUoW:
     def __init__(self):

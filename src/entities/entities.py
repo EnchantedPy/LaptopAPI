@@ -10,6 +10,10 @@ class Laptop(BaseModel):
       brand: str
       cpu: str
       gpu: str
+		igpu: str
+		ram: int
+		storage: int
+		diagonal: float
       min_price: int
       max_price: int
       
@@ -17,12 +21,11 @@ class Laptop(BaseModel):
         from_attributes = True
       
 
-class UserActivity(BaseModel):
+class Activity(BaseModel):
       id: int
       user_id: int
-      action: str
-      timestamp: datetime
       detail: str
+      timestamp: datetime
       
       class Config:
         from_attributes = True
@@ -31,12 +34,10 @@ class UserActivity(BaseModel):
 class User(BaseModel):
        id: int
        username: str
-       name: str
        hashed_password: bytes
        email: EmailStr
        active: bool
-       laptop_templates: List[Laptop]
-       user_activity: List[UserActivity]
+		 role: str
        
        class Config:
         from_attributes = True
@@ -44,8 +45,8 @@ class User(BaseModel):
 
 class TokenPayload(BaseModel):
     sub: int
-    name: Optional[str]
-    email: Optional[EmailStr]
+    username: Optional[str] # only for access token
+    email: Optional[EmailStr] # only for access token
     role: str
     exp: int
     iat: int
