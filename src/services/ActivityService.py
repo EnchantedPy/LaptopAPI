@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import List
 from src.core.exceptions.exceptions import ActivityNotFoundException, UserNotFoundException
-from src.entities.entities import UserActivity
+from src.entities.entities import Activity
 from src.utils.logger import logger
 from src.utils.UnitOfWork import SQLAlchemyUoW
 from src.schemas.schemas import UserActivityAddSchema, UserActivityDeleteSchema
-from models.models import UserActivityModel
+from models.models import ActivityOrm
 
 class UserActivityService:
     async def add(self, uow: SQLAlchemyUoW, data: UserActivityAddSchema) -> None:
@@ -16,7 +16,7 @@ class UserActivityService:
             result = await uow.user_activity.add(data)
             return result
 
-    async def get_by_user_id(self, uow: SQLAlchemyUoW, user_id: int, limit: int = 20, offset: int = 0) -> List[UserActivity]:
+    async def get_by_user_id(self, uow: SQLAlchemyUoW, user_id: int, limit: int = 20, offset: int = 0) -> List[Activity]:
         async with uow:
             user_owner = await uow.users.get_by_id(user_id)
             if not user_owner:
@@ -24,12 +24,12 @@ class UserActivityService:
             result = await uow.user_activity.get_list_by_owner_id(user_id, offset, limit)
             return result
 
-    async def get_by_timestamp(self, uow: SQLAlchemyUoW, timestamp: datetime, limit: int = 20, offset: int = 0) -> List[UserActivity]:
+    async def get_by_timestamp(self, uow: SQLAlchemyUoW, timestamp: datetime, limit: int = 20, offset: int = 0) -> List[Activity]:
         async with uow:
             result = await uow.user_activity.get_by_timestamp(timestamp, limit, offset)
             return result
 
-    async def get_all(self, uow: SQLAlchemyUoW, offset: int = 0, limit: int = 20) -> List[UserActivityModel]:
+    async def get_all(self, uow: SQLAlchemyUoW, offset: int = 0, limit: int = 20) -> List[ActivityOrm]:
         async with uow:
             result = await uow.user_activity.get_all(offset, limit)
             return result

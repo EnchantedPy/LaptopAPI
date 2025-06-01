@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 from src.core.exceptions.exceptions import DatabaseDataException, DatabaseConfigurationException, DatabaseException, DatabaseIntegrityException, DatabaseOperationalException, S3ClientException, S3ConnectionException, S3Exception, S3NoCredentialsException, S3ParameterValidationException
-from src.db.realtional_db import async_session_maker
+from src.db.db import async_session_maker
 from src.repositories.user import UserRepository
 from src.repositories.laptop import LaptopRepository
 from aiobotocore.session import get_session
 from src.s3.s3_client_factory import s3_client_maker
 from src.repositories.jsondata import JsonDataRepository
-from src.repositories.user_activity import UserActivityRepository
+from src.repositories.activity import ActivityRepository
 from src.utils.logger import logger
 from sqlalchemy.exc import (
 	IntegrityError,
@@ -111,7 +111,6 @@ class S3UoW:
 
 
 
-
 class SQLAlchemyUoW:
     def __init__(self):
         self._session_factory = async_session_maker
@@ -127,7 +126,7 @@ class SQLAlchemyUoW:
             self._session = self._session_factory()
             self.users = UserRepository(self._session)
             self.laptops = LaptopRepository(self._session)
-            self.user_activity = UserActivityRepository(self._session)
+            self.user_activity = ActivityRepository(self._session)
             return self
         except OperationalError as e:
             logger.error(f"OperationalError in SQLAlchemyUoW.__aenter__ (DB connection issue): {e}")

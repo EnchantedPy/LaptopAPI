@@ -4,7 +4,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
 from sqlalchemy import String, DateTime
 from sqlalchemy.sql.schema import ForeignKey
 
-
 class Base(DeclarativeBase):
     pass
 
@@ -17,9 +16,9 @@ class UserOrm(Base):
     hashed_password: Mapped[bytes]
     email: Mapped[str] = mapped_column(String, unique=True)
     active: Mapped[bool]
-	 role: Mapped[str]
+    role: Mapped[str]
     laptops: Mapped[list['LaptopOrm']] = relationship('LaptopOrm', back_populates='user')
-    activities: Mapped[list['ActvityOrm']] = relationship('ActvityOrm', back_populates='user')
+    activities: Mapped[list['ActivityOrm']] = relationship('ActvityOrm', back_populates='user')
     
 
 class LaptopOrm(Base):
@@ -30,10 +29,10 @@ class LaptopOrm(Base):
     brand: Mapped[str]
     cpu: Mapped[str]
     gpu: Mapped[str]
-	 igpu: Mapped[str]
-	 ram: Mapped[int]
-	 storage: Mapped[int]
-	 diagonal: Mapped[float]
+    igpu: Mapped[str]
+    ram: Mapped[int]
+    storage: Mapped[int]
+    diagonal: Mapped[float]
     min_price: Mapped[int]
     max_price: Mapped[int]
 

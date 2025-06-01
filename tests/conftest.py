@@ -7,10 +7,10 @@ from fastapi.testclient import TestClient
 from main import app
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from src.models.models import Base
-from config.TestSettings import STestSettings
+from config.settings import TestSettings
 from src.repositories.laptop import LaptopRepository
 from src.repositories.user import UserRepository
-from src.repositories.user_activity import UserActivityRepository
+from src.repositories.activity import UserActivityRepository
 from sqlalchemy.exc import (
 	IntegrityError,
 	OperationalError,
@@ -19,7 +19,7 @@ from sqlalchemy.exc import (
    ArgumentError
 )
 
-fake_engine = create_async_engine(STestSettings.test_pg_url, echo=True)
+fake_engine = create_async_engine(TestSettings.test_pg_url, echo=True)
 fake_async_session_maker = async_sessionmaker(fake_engine, expire_on_commit=False)
 
 
@@ -106,7 +106,7 @@ def setup_test_db():
 
     app.dependency_overrides[SQLAlchemyUoW] = get_test_uow
     
-    sync_url = STestSettings.test_pg_url.replace('postgresql+asyncpg://', 'postgresql+psycopg2://')
+    sync_url = TestSettings.test_pg_url.replace('postgresql+asyncpg://', 'postgresql+psycopg2://')
     from sqlalchemy import create_engine
     sync_engine = create_engine(sync_url)
 

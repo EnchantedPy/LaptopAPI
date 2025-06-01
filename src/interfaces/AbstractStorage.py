@@ -12,9 +12,5 @@ class StorageInterface(ABC):
 		raise NotImplementedError
 	
 	@abstractmethod
-	async def get_all(self) -> list[Any]:
-		raise NotImplementedError
-	
-	@abstractmethod
 	async def delete(self, key: Any) -> None:
 		raise NotImplementedError

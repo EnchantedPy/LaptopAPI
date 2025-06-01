@@ -2,12 +2,13 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 class CacheInterface(ABC):
+
 	@abstractmethod
 	async def get(self, key: str) -> Any:
 		raise NotImplementedError
 	
 	@abstractmethod
-	async def put(self, key: str, data: Any) -> Any:
+	async def put(self, key: str, data: Any) -> None:
 		raise NotImplementedError
 	
 	@abstractmethod

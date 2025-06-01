@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 import uuid
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
@@ -10,10 +10,10 @@ class Laptop(BaseModel):
       brand: str
       cpu: str
       gpu: str
-		igpu: str
-		ram: int
-		storage: int
-		diagonal: float
+      igpu: str
+      ram: int
+      storage: int
+      diagonal: float
       min_price: int
       max_price: int
       
@@ -37,7 +37,7 @@ class User(BaseModel):
        hashed_password: bytes
        email: EmailStr
        active: bool
-		 role: str
+       role: str
        
        class Config:
         from_attributes = True

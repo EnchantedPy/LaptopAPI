@@ -1,10 +1,7 @@
-from functools import wraps
 import json
-import logging
 from typing import Any
 from src.interfaces.AbstractCache import CacheInterface
 from redis.asyncio import Redis
-from redis.exceptions import RedisError
 from src.utils.logger import logger
 
 

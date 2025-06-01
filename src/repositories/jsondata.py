@@ -1,5 +1,5 @@
 from src.utils.S3Repository import S3Repository
-from config.settings import SAppSettings
+from config.settings import Settings
 
 class JsonDataRepository(S3Repository):
-	bucket_name = SAppSettings.s3_bucket_name
+	bucket_name = Settings.s3_bucket_name

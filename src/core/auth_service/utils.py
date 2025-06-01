@@ -3,7 +3,7 @@ import uuid
 import jwt
 import bcrypt
 from src.entities.entities import User
-from config.settings import SAppSettings
+from config.settings import Settings
 
 ACCESS_TOKEN_TYPE = 'access'
 REFRESH_TOKEN_TYPE = 'refresh'
@@ -24,18 +24,18 @@ def create_token(
 
 def create_admin_access_token():
 	jwt_payload = {
-		'sub': str(SAppSettings.admin_id),
-		'name': SAppSettings.admin_name,
+		'sub': str(Settings.admin_id),
+		'name': Settings.admin_name,
 		'role': 'admin'
 	}
-	return create_token(ACCESS_TOKEN_TYPE, jwt_payload, SAppSettings.access_token_expire_minutes)
+	return create_token(ACCESS_TOKEN_TYPE, jwt_payload, Settings.access_token_expire_minutes)
 
 def create_admin_refresh_token():
 	jwt_payload = {
-		'sub': str(SAppSettings.admin_id),
+		'sub': str(Settings.admin_id),
 		'role': 'admin'
 	}
-	return create_token(REFRESH_TOKEN_TYPE, jwt_payload, SAppSettings.refresh_token_expire_minutes)
+	return create_token(REFRESH_TOKEN_TYPE, jwt_payload, Settings.refresh_token_expire_minutes)
 
 
 def create_access_token(user: User):
@@ -45,21 +45,21 @@ def create_access_token(user: User):
 		'email': user.email,
 		'role': 'user'
 	}
-	return create_token(ACCESS_TOKEN_TYPE, jwt_payload, SAppSettings.access_token_expire_minutes)
+	return create_token(ACCESS_TOKEN_TYPE, jwt_payload, Settings.access_token_expire_minutes)
 
 def create_refresh_token(user: User):
 	jwt_payload = {
 		'sub': str(user.id),
 		'role': 'user'
 	}
-	return create_token(REFRESH_TOKEN_TYPE, jwt_payload, SAppSettings.refresh_token_expire_minutes)
+	return create_token(REFRESH_TOKEN_TYPE, jwt_payload, Settings.refresh_token_expire_minutes)
 
 
 def encode_jwt(
 		payload: dict,
 		expire_minutes: int,
-		algorithm: str = SAppSettings.jwt_algorithm,
-		private_key: str = SAppSettings.jwt_private_key_path.read_text(),
+		algorithm: str = Settings.jwt_algorithm,
+		private_key: str = Settings.jwt_private_key_path.read_text(),
 ):
 	
 	to_encode = payload.copy()
@@ -81,8 +81,8 @@ def encode_jwt(
 
 def decode_jwt(
 		token: str | bytes,
-		algorithm: str = SAppSettings.jwt_algorithm,
-		public_key: str = SAppSettings.jwt_public_key_path.read_text()
+		algorithm: str = Settings.jwt_algorithm,
+		public_key: str = Settings.jwt_public_key_path.read_text()
 ):
 	decoded = jwt.decode(
 		jwt=token,

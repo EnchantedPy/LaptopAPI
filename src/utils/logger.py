@@ -1,7 +1,6 @@
 import logging
 from pathlib import Path
-from config.settings import SAppSettings
-from config.TestSettings import STestSettings
+from config.settings import Settings, TestSettings
 
 LOG_FORMAT = (
     "%(asctime)s\t%(name)s\t%(levelname)s\t"
@@ -31,11 +30,11 @@ def setup_logger(name: str, log_file: str, level=logging.INFO, stream: bool = Tr
 logger = setup_logger(
     name="Logger",
     log_file=Path("logs/app.log"),
-    level=getattr(logging, SAppSettings.log_level.upper(), logging.INFO)
+    level=getattr(logging, Settings.log_level.upper(), logging.INFO)
 )
 
 test_logger = setup_logger(
     name="tests",
     log_file=Path("logs/tests.log"),
-    level=getattr(logging, STestSettings.log_level.upper(), logging.DEBUG)
+    level=getattr(logging, TestSettings.log_level.upper(), logging.DEBUG)
 )

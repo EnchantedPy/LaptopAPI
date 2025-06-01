@@ -1,12 +1,9 @@
-from functools import wraps
 from io import BytesIO
 import json
 from typing import Any
 from src.interfaces.AbstractStorage import StorageInterface
 from aiobotocore.client import AioBaseClient
-from botocore.exceptions import BotoCoreError
 from src.utils.logger import logger
-from src.utils.helpers import json_to_dict
 
 
 class S3Repository(StorageInterface):
@@ -25,32 +22,8 @@ class S3Repository(StorageInterface):
         response = await self._client.get_object(Bucket=self.bucket_name, Key=object_name)
         raw_bytes = await response['Body'].read()
         data = raw_bytes.decode('utf-8')
-        dict_data = await json_to_dict(data)
+        dict_data = json.loads(data)
         return dict_data
 
     async def delete(self, object_name: str) -> None:
         await self._client.delete_object(Bucket=self.bucket_name, Key=object_name)
-
-    async def get_all(self) -> list[str]:
-        keys = []
-        continuation_token = None
-
-        while True:
-            params = {
-                "Bucket": self.bucket_name,
-                "MaxKeys": 20,
-            }
-
-            if continuation_token:
-                params["ContinuationToken"] = continuation_token
-
-            response = await self._client.list_objects_v2(**params)
-            contents = response.get("Contents", [])
-            keys.extend(obj["Key"] for obj in contents)
-
-            if response.get("IsTruncated"):
-                continuation_token = response.get("NextContinuationToken")
-            else:
-                break
-
-        return keys

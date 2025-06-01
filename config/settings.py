@@ -1,7 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field, field_validator
+from pydantic import ConfigDict, Field, field_validator
 from typing import Any, Dict, Union
-import json
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,10 +11,10 @@ class AppSettings(BaseSettings):
     rmq_port: int = Field(..., env='rmq_port')
     rmq_user: str = Field(..., env='rmq_user')
     rmq_password: str = Field(..., env='rmq_password')
-
-	 @property
-	 def rmq_url(self) -> str:
-		return f'amqp://{self.rmq_user}:{self.rmq_password}@{self.rmq_host}:{self.rmq_port}//'
+    
+    @property
+    def rmq_url(self) -> str:
+         return f'amqp://{self.rmq_user}:{self.rmq_password}@{self.rmq_host}:{self.rmq_port}//'
     
     s3_bucket_name: str = Field(..., env='s3_bucket_name')
     s3_endpoint_url: str = Field(..., env='s3_endpoint_url')
@@ -34,15 +33,15 @@ class AppSettings(BaseSettings):
     postgres_name: str = Field(..., env="postgres_name")
     postgres_password: str = Field(..., env="postgres_password")
     postgres_user: str = Field(..., env="postgres_user")
-	 postgres_host: str = Field(..., env="postgres_host")
-
-	 @property
-	 def postgres_async_url(self) -> str:
-		return f'postgresql+asyncpg://{self.postgres_user}:{se;f.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_name}'
-	
-	 @property
-	 def postgres_sync_url(self) -> str:
-		return f'postgresql+psycopg2://{self.postgres_user}:{se;f.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_name}'
+    postgres_host: str = Field(..., env="postgres_host")
+    
+    @property
+    def postgres_async_url(self) -> str:
+         return f'postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_name}'
+    
+    @property
+    def postgres_sync_url(self) -> str:
+        return f'postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_name}'
 
 
     admin_name: str = Field(..., env="admin_username")
@@ -65,10 +64,10 @@ class AppSettings(BaseSettings):
     redis_host: str = Field(..., env="redis_host")
     redis_port: int = Field(..., env="redis_port")
     redis_timeout: int = Field(..., env="redis_timeout")
-
-	 @property
-	 def redis_url(self) -> str:
-		return f'redis://{self.redis_host}:{self.redis_port}'
+    
+    @property
+    def redis_url(self) -> str:
+         return f'redis://{self.redis_host}:{self.redis_port}'
 
     app_name: str = Field(..., env="app_name")
     app_version: str = Field(..., env="app_version")

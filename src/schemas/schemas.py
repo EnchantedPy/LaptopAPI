@@ -5,17 +5,11 @@ from pydantic import BaseModel, EmailStr, model_validator
 '''User schemas'''
 
 class UserAddSchema(BaseModel):
-	id: int
 	role: str
 	active: bool
 	username: str
 	email: EmailStr
 	hashed_password: str
-
-class UserUpdateSchema(BaseModel):
-	username: Optional[str] = None
-	email: Optional[EmailStr] = None
-	password: Optional[str] = None
 
 class UserUpdateSchema(BaseModel):
 	id: int
@@ -31,7 +25,6 @@ class UserDeleteSchema(BaseModel):
 '''Laptop schemas'''
 
 class LaptopAddSchema(BaseModel):
-	id: int
 	user_id: int
 	brand: str
 	cpu: str
@@ -44,17 +37,6 @@ class LaptopAddSchema(BaseModel):
 	max_price: int
 
 class LaptopUpdateSchema(BaseModel):
-	brand: Optional[str] = None
-	cpu: Optional[str] = None
-	gpu: Optional[str] = None
-	igpu: Optional[str] = None
-	ram: Optional[int] = None
-	storage: Optional[int] = None
-	diagonal: Optional[float] = None
-	min_price: Optional[int] = None
-	max_price: Optional[int] = None
-
-class LaptopUpdateInternalSchema(BaseModel):
 	user_id: int
 	brand: Optional[str] = None
 	cpu: Optional[str] = None
@@ -91,6 +73,11 @@ class UserRegisterSchema(BaseModel):
 	email: EmailStr
 	password: str
 
+class UserChangeSchema(BaseModel):
+	username: Optional[str] = None
+	email: Optional[EmailStr] = None
+	password: Optional[str] = None
+
 class LaptopRegisterSchema(BaseModel):
 	brand: str
 	cpu: str
@@ -101,3 +88,14 @@ class LaptopRegisterSchema(BaseModel):
 	diagonal: float
 	min_price: int
 	max_price: int
+
+class LaptopChangeSchema(BaseModel):
+	brand: Optional[str] = None
+	cpu: Optional[str] = None
+	gpu: Optional[str] = None
+	igpu: Optional[str] = None
+	ram: Optional[int] = None
+	storage: Optional[int] = None
+	diagonal: Optional[float] = None
+	min_price: Optional[int] = None
+	max_price: Optional[int] = None

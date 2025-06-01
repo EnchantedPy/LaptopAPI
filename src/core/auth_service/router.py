@@ -15,7 +15,7 @@ from src.services.UserService import UserService
 from src.core.dependencies.dependencies import SqlUoWDep
 from src.utils.logger import logger
 from src.services.UserService import UserService
-from config.settings import SAppSettings
+from config.settings import Settings
 
 AuthRouter = APIRouter(prefix='/auth', tags=['Auth'])
 
@@ -48,7 +48,7 @@ async def login_user(data: UserLoginSchema, uow: SqlUoWDep, response: Response):
 
 @AuthRouter.post('/login/admin')
 async def login_user(data: AdminLoginSchema, response: Response):
-	if not data.password == SAppSettings.admin_password and not data.name == SAppSettings.admin_name and not data.admin_secret == SAppSettings.admin_secret:
+	if not data.password == Settings.admin_password and not data.name == Settings.admin_name and not data.admin_secret == Settings.admin_secret:
 		raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect credentials')
 	access_token = create_admin_access_token()
 	refresh_token = create_admin_refresh_token()
