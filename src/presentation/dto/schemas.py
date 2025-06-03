@@ -15,10 +15,7 @@ class UserUpdateSchema(BaseModel):
 	id: int
 	username: Optional[str] = None
 	email: Optional[EmailStr] = None
-	password: Optional[str] = None
-
-class UserDeleteSchema(BaseModel):
-	id: int
+	hashed_password: Optional[str] = None
 
 
 
@@ -48,9 +45,6 @@ class LaptopUpdateSchema(BaseModel):
 	min_price: Optional[int] = None
 	max_price: Optional[int] = None
 
-class LaptopDeleteSchema(BaseModel):
-	user_id: int
-
 
 
 '''Activity schemas'''
@@ -68,7 +62,7 @@ class LoginSchema(BaseModel):
 	username: str
 	password: str
 
-class UserRegisterSchema(BaseModel):
+class UserCreateSchema(BaseModel):
 	username: str
 	email: EmailStr
 	password: str
@@ -78,7 +72,7 @@ class UserChangeSchema(BaseModel):
 	email: Optional[EmailStr] = None
 	password: Optional[str] = None
 
-class LaptopRegisterSchema(BaseModel):
+class LaptopCreateSchema(BaseModel):
 	brand: str
 	cpu: str
 	gpu: str
@@ -99,3 +93,23 @@ class LaptopChangeSchema(BaseModel):
 	diagonal: Optional[float] = None
 	min_price: Optional[int] = None
 	max_price: Optional[int] = None
+
+
+'''...............'''
+
+RegisterRequestSchema(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+
+UserUpdateSchema(BaseModel):
+    id: int
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+
+UserResponseDto(BaseModel):
+	id: int
+	username: str
+	email: EmailStr
+	active: bool

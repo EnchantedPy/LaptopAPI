@@ -15,11 +15,67 @@ from src.entities.entities import TokenPayload
 from src.utils.UnitOfWork import SQLAlchemyUoW
 from src.utils.logger import logger
 from starlette.middleware.base import BaseHTTPMiddleware
+from src.presentation.dependencies import get_sqla_uow, SqlUoWDep
+from contextlib import asynccontextmanager
+from redis.asyncio import Redis
+from config.settings import Settings
+from src.presentation.dependencies import RedisDep
 
 
-app = FastAPI(title='Laptop API')
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+	app.state.redis = Redis(host=Settings.redis_host, port=Settings.redis_port, db=0)
+	s3_client = await s3_client_maker()
+	app.state.s3_repository = S3Repository(s3_client)
+	yield
+	await app.state.redis.close()
+	await s3_client.close()
+
+
+app = FastAPI(title='Laptop API', lifespan=lifespan, dependencies=[SqlUoWDep, RedisDep])
 apply_routers(app)
 
+from botocore.exceptions import ClientError
+
+@app.middleware("http")
+async def s3_error_middleware(request: Request, call_next: Callable | Awaitalbe) -> Response:
+    try:
+        return await call_next(request)
+    except ClientError as e:
+        status_code = 500
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            status_code = 404
+        raise HTTPException(
+            status_code=status_code,
+            detail=e.response['Error']['Message']
+        )
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(SQLAlchemyError)
+async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError):
+    status_code = 500
+    detail = "Database error"
+    
+    if isinstance(exc, IntegrityError):
+        status_code = 409
+        detail = "Data conflict"
+    elif isinstance(exc, OperationalError):
+        status_code = 503
+        detail = "Database unavailable"
+    elif isinstance(exc, DataError):
+        status_code = 400
+        detail = "Invalid data format"
+    
+    return JSONResponse(
+        status_code=status_code,
+        content={"detail": detail}
+    )
 
 # -------- Service exception handlers --------
 
@@ -65,132 +121,8 @@ apply_routers(app)
 #         content={"detail": exc.detail}
 #     )
 
-@app.exception_handler(LaptopTemplatesLimitException)
-async def no_credentials_s3_error_handler(request: Request, exc: LaptopTemplatesLimitException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(IncorrectSubmitPassword)
-async def no_credentials_s3_error_handler(request: Request, exc: IncorrectSubmitPassword):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(ActivityNotFoundException)
-async def no_credentials_s3_error_handler(request: Request, exc: ActivityNotFoundException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(LaptopNotFoundException)
-async def no_credentials_s3_error_handler(request: Request, exc: LaptopNotFoundException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(UserNotFoundException)
-async def no_credentials_s3_error_handler(request: Request, exc: UserNotFoundException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(NoChangesProvidedException)
-async def no_credentials_s3_error_handler(request: Request, exc: NoChangesProvidedException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-# -------- S3 exception handlers --------
-
-@app.exception_handler(S3NoCredentialsException)
-async def no_credentials_s3_error_handler(request: Request, exc: S3NoCredentialsException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-
-@app.exception_handler(S3ConnectionException)
-async def connection_s3_error_handler(request: Request, exc: S3ConnectionException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-
-@app.exception_handler(S3Exception)
-async def s3_error_handler(request: Request, exc: S3Exception):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-
-@app.exception_handler(S3ClientException)
-async def client_s3_error_handler(request: Request, exc: S3ClientException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-
-@app.exception_handler(S3ParameterValidationException)
-async def param_validation_s3_error_handler(request: Request, exc: S3ParameterValidationException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-# -------- Database exception handlers --------
-
-@app.exception_handler(DatabaseException)
-async def db_error_hablder(request: Request, exc: DatabaseException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(DatabaseConfigurationException)
-async def configuration_db_error_handler(request: Request, exc: DatabaseConfigurationException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(DatabaseDataException)
-async def data_db_error_handler(request: Request, exc: DatabaseDataException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(DatabaseIntegrityException)
-async def integrity_db_error_handler(request: Request, exc: DatabaseIntegrityException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
-@app.exception_handler(DatabaseOperationalException)
-async def operational_db_error_handler(request: Request, exc: DatabaseOperationalException):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
-
 
 # ------------ App ------------
-
-
-def get_sqla_uow() -> SQLAlchemyUoW:
-	return SQLAlchemyUoW()
 
 
 PUBLIC_PATHS = {"/", "/docs", "/openapi.json", "/redoc"}
