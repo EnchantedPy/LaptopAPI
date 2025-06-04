@@ -29,11 +29,11 @@ class AppSettings(BaseSettings):
             'endpoint_url': self.s3_endpoint_url
         }
     
-    postgres_url: Any = Field(..., env="postgres_url")
     postgres_name: str = Field(..., env="postgres_name")
     postgres_password: str = Field(..., env="postgres_password")
     postgres_user: str = Field(..., env="postgres_user")
     postgres_host: str = Field(..., env="postgres_host")
+    postgres_port: int = Field(..., env="postgres_port")
     
     @property
     def postgres_async_url(self) -> str:
@@ -68,6 +68,15 @@ class AppSettings(BaseSettings):
     @property
     def redis_url(self) -> str:
          return f'redis://{self.redis_host}:{self.redis_port}'
+    
+    elastic_host: str = Field(..., env="elastic_host")
+    elastic_port: int = Field(..., env="elastic_port")
+    elastic_user: str = Field(..., env="elastic_user")
+    elastic_password: str = Field(..., env="elastic_password")
+
+    @property
+    def elastic_url(self) -> str:
+        return f'http://{self.elastic_host}:{self.elastic_port}'
 
     app_name: str = Field(..., env="app_name")
     app_version: str = Field(..., env="app_version")

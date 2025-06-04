@@ -49,7 +49,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U ${postgres_user} -d ${postgres_name}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -89,7 +89,7 @@ services:
     ports:
       - "5555:5555"
     depends_on:
-      - rabbitmq
+      - celery
 
   localstack:
     container_name: aws-localstack
@@ -118,14 +118,68 @@ services:
     volumes:
       - postgres_test_data:/var/lib/postgresql/data
     healthcheck:
-      test:
-        ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -p 5432"]
+      test: ["CMD-SHELL", "pg_isready -U test_user -d test_db -p 5445"]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 10s
     networks:
       - default
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=${elastic_password}
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - default
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -sf -u elastic:${ELASTIC_PASSWORD} http://localhost:9200/_cluster/health > /dev/null",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${elastic_password}
+    ports:
+      - "5601:5601"
+    networks:
+      - default
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -sf -u elastic:${ELASTIC_PASSWORD} http://localhost:5601/api/status > /dev/null",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
 
 networks:
   default:
@@ -137,3 +191,4 @@ volumes:
   celery:
   redis_data:
   postgres_test_data:
+  elasticsearch-data:

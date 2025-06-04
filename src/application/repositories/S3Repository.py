@@ -1,11 +1,11 @@
 import json
 from typing import Any
-from src.interfaces.AbstractStorage import StorageInterface
+from src.core.interfaces.AbstractStorage import FullRepository
 from aiobotocore.client import AioBaseClient
 from src.utils.logger import logger
 from config.settings import Settings
 
-class S3Repository(StorageInterface):
+class S3Repository(FullRepository):
     bucket_name = Settings.s3_bucket_name
 
     def __init__(self, _client: AioBaseClient):
@@ -15,8 +15,8 @@ class S3Repository(StorageInterface):
          await self._client.put_object(Bucket=self.bucket_name, Key=key, Body=data)
     
     async def get(self, object_name: str) -> Any:
-        response = await self._client.get_object(Bucket=self.bucket_name, Key=object_name)
-		  return await response['Body'].read()
+          response = await self._client.get_object(Bucket=self.bucket_name, Key=object_name)
+          return await response['Body'].read()
 
     async def delete(self, object_name: str) -> None:
         await self._client.delete_object(Bucket=self.bucket_name, Key=object_name)

@@ -1,8 +1,10 @@
-from src.core.exceptions.exceptions import IncorrectSubmitPassword, NoChangesProvidedException, UserNotFoundException
-from src.schemas.schemas import UserAddSchema, UserDeleteSchema, UserUpdateInternalSchema, UserUpdateSchema, UserCreateSchema
+from typing import List
+
+from fastapi import HTTPException, status
+from src.presentation.dto.schemas import RegisterRequestSchema, UserResponseDto, UserUpdateSchema
 from src.utils.UnitOfWork import UnitOfWork
 from src.utils.logger import logger
-from src.core.auth_service.utils import hash_password, validate_password
+from src.presentation.api.auth_service.utils import hash_password, validate_password
 
 
 USER_ROLE = 'user'
@@ -10,13 +12,13 @@ USER_ROLE = 'user'
 class UserService:
 
     async def add(self, uow: UnitOfWork, data: RegisterRequestSchema):
-		  register_data = data.model_dump()
-        register_data.password = hash_password(data.password)
-		  register_data.role = USER_ROLE
-		  register_data.active = True
-        async with uow:
-            await uow.users.add(register_data)
-		  logger.info(f"User created with username: {data.username}")
+          register_data = data.model_dump()
+          register_data.password = hash_password(data.password)
+          register_data.role = USER_ROLE
+          register_data.active = True
+          async with uow:
+                await uow.users.add(register_data)
+          logger.info(f"User created with username: {data.username}")
 
     async def get_all(self, uow: UnitOfWork, offset: int = 0, limit: int = 10) -> List[UserResponseDto]:
         async with uow:
@@ -45,8 +47,7 @@ class UserService:
             if not user:
                  logger.warning(f"Update attempt for non-existent user ID: {data.id}")
                  raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
-				if not user.active:
+            if not user.active:
                  logger.warning(f"Update attempt for inactive user ID: {data.id}")
                  raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User is inactive")
          
@@ -76,7 +77,7 @@ class UserService:
                  raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No actual changes provided") 
             
             await uow.users.update(data.id, update_data_dict)
-            logger.info(f"User with ID {data.id} successfully updated. Changed fields: {list(update_data.keys())}")
+            logger.info(f"User with ID {data.id} successfully updated. Changed fields: {list(update_data_dict.keys())}")
 
     async def delete(self, uow: UnitOfWork, user_id: int):
         async with uow:

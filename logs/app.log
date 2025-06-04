@@ -92,3 +92,23 @@
 2025-05-27 10:38:30	Logger	DEBUG	main.py:231	Path /auth/login/user is for unauthenticated users. Proceeding.
 2025-05-27 10:38:30	Logger	INFO	UserService.py:33	User fetched by username: ovrkill
 2025-05-27 10:38:30	Logger	INFO	main.py:224	Logged-in user 2 attempted to access /auth/register
+2025-06-04 11:02:40	Logger	DEBUG	main.py:169	Path /docs is public. Skipping authentication.
+2025-06-04 11:02:40	Logger	DEBUG	main.py:169	Path /openapi.json is public. Skipping authentication.
+2025-06-04 11:04:38	Logger	WARNING	main.py:250	No valid tokens found for path /documents/data. Unauthorized access attempt.
+2025-06-04 11:08:11	Logger	DEBUG	main.py:169	Path /docs is public. Skipping authentication.
+2025-06-04 11:08:11	Logger	DEBUG	main.py:169	Path /openapi.json is public. Skipping authentication.
+2025-06-04 11:08:30	Logger	DEBUG	main.py:169	Path /documents/data is public. Skipping authentication.
+2025-06-04 11:13:10	Logger	DEBUG	main.py:172	Path /docs is public. Skipping authentication.
+2025-06-04 11:13:10	Logger	DEBUG	main.py:172	Path /openapi.json is public. Skipping authentication.
+2025-06-04 11:13:20	Logger	DEBUG	main.py:172	Path /documents/data is public. Skipping authentication.
+2025-06-04 11:16:58	Logger	DEBUG	main.py:172	Path /docs is public. Skipping authentication.
+2025-06-04 11:16:59	Logger	DEBUG	main.py:172	Path /openapi.json is public. Skipping authentication.
+2025-06-04 11:17:06	Logger	DEBUG	main.py:172	Path /documents/data is public. Skipping authentication.
+2025-06-04 11:26:24	Logger	DEBUG	main.py:172	Path /docs is public. Skipping authentication.
+2025-06-04 11:26:25	Logger	DEBUG	main.py:172	Path /openapi.json is public. Skipping authentication.
+2025-06-04 11:27:28	Logger	DEBUG	main.py:172	Path /documents/data is public. Skipping authentication.
+2025-06-04 11:27:46	Logger	DEBUG	main.py:172	Path /search/data is public. Skipping authentication.
+2025-06-04 11:28:25	Logger	DEBUG	main.py:172	Path /docs is public. Skipping authentication.
+2025-06-04 11:28:26	Logger	DEBUG	main.py:172	Path /openapi.json is public. Skipping authentication.
+2025-06-04 11:58:27	Logger	DEBUG	main.py:172	Path /docs is public. Skipping authentication.
+2025-06-04 11:58:28	Logger	DEBUG	main.py:172	Path /openapi.json is public. Skipping authentication.

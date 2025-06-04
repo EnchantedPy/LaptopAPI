@@ -1,20 +1,18 @@
-from typing import List, Optional
-from src.interfaces.AbstractDatabase import ReadRepository, WriteRepository, FullRepository
-from sqlalchemy import select
+from typing import List, Optional, Type
+from src.core.interfaces.AbstractDatabase import ReadRepository, WriteRepository, FullRepository
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.schemas.schemas import LaptopAddSchema, LaptopDeleteSchema, LaptopUpdateSchema, UserAddSchema, UserDeleteSchema, UserUpdateSchema, ActivityAddInternalSchema
 from src.utils.logger import logger
-from datetime import datetime
-from src.entities.entities import Activity, User, Laptop, Activity
+from src.infrastructure.db.models import UserOrm, LaptopOrm
 
 
-class UserPostgresRepository(FullRepository):
+class UserRepository(FullRepository):
     
-    def __init__(self, _session: AsyncSession, model: Type[UserModel]):
+    def __init__(self, _session: AsyncSession, model: Type[UserOrm]):
         self._session = _session
-		  self.model = model
+        self.model = model
 
-    async def get_by_id(self, user_id: int) -> User | None:
+    async def get_by_id(self, user_id: int) -> UserOrm | None:
         query = (
             select(self.model)
             .where(self.model.id == user_id)
@@ -22,15 +20,13 @@ class UserPostgresRepository(FullRepository):
         result = await self._session.execute(query)
         return result.scalars().first()
 
-    async def get_all(self, offset: int, limit: int, only_active: bool) -> List[User]:
-		query = select(self.model)
-
-		if only_active:
-			 query = query.where(self.model.is_active == True)
-
-		query = query.limit(limit).offset(offset)
-		result = await self._session.execute(query)
-		return result.scalars().all()
+    async def get_all(self, offset: int, limit: int, only_active: bool) -> List[UserOrm]:
+          query = select(self.model)
+          if only_active:
+                query = query.where(self.model.is_active == True)
+          query = query.limit(limit).offset(offset)
+          result = await self._session.execute(query)
+          return result.scalars().all()
     
     async def add(self, user_data: dict) -> None:
         new_user = self.model(
@@ -48,59 +44,31 @@ class UserPostgresRepository(FullRepository):
         await self._session.execute(query)
         
 
-class LaptopPostgresRepository(FullRepository):
+class LaptopRepository(FullRepository):
     
-    def __init__(self, _session: AsyncSession, model: Type[LaptopModel]):
+    def __init__(self, _session: AsyncSession, model: Type[LaptopOrm]):
         self._session = _session
         self.model = model 
 
-    async def get_by_id(self, user_id: int) -> Optional[Laptop]:
+    async def get_by_id(self, user_id: int) -> LaptopOrm | None:
         query = select(self.model).where(self.model.user_id == user_id)
         result = await self._session.execute(query)
         return result.scalars().first()
 
     async def add(self, laptop_data: dict) -> None:
         new_laptop = self.model(
-            **data
+            **laptop_data
 		  )
         self._session.add(new_laptop)
         
     async def update(self, user_id, update_data: dict) -> None:
-        query = update(self.model)
-        .where(self.model.user_id == user_id)
-        .values(**update_data)
-		  await self._session.execute(query)
+        query = update(self.model).where(self.model.user_id == user_id).values(**update_data)
+        await self._session.execute(query)
         
 
     async def delete(self, user_id: int) -> None:
         query = delete(self.model).where(self.model.user_id == user_id)
         await self._session.execute(query)
-
-
-class ActivityPostgresRepository(ReadRepository, WriteRepository):
-
-    def __init__(self, _session: AsyncSession, model: Type[ActivityModel]):
-        self.model = model
-        self._session = _session
-
-    async def get_by_id(self, user_id: int, offset: int, limit: int) -> List[Activity]:
-        query = select(self.model).where(self.model.user_id == user_id).limit(limit).offset(offset)
-        result = await self._session.execute(query)
-        return result.scalars().all()
-
-    async def get_all(self, offset: int, limit: int) -> List[Activity]:
-        query = select(self.model).offset(offset).limit(limit)
-        result = await self._session.execute(query)
-        return result.scalars().all()
-
-    async def add(self, activity_data: dict):
-        new_activity = self.model(
-            **activity_data
-        )
-        self._session.add(new_activity)
-
-
-
 
 	
 

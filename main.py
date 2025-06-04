@@ -1,44 +1,48 @@
-from typing import Awaitable, Callable, Optional
+from typing import Any, Awaitable, Callable, Dict, Optional
 from fastapi import FastAPI, HTTPException, Request, Response, status
 from fastapi.responses import JSONResponse
 from jwt import ExpiredSignatureError, InvalidTokenError
-from config.settings import SAppSettings
-from src.core.auth_service.utils import create_access_token, decode_jwt
-from src.core.routers import apply_routers
-from src.core.exceptions.exceptions import (
-	IncorrectSubmitPassword, NoChangesProvidedException, UserNotFoundException, LaptopTemplatesLimitException, LaptopNotFoundException, ActivityNotFoundException,
-    #FailedTokenRefreshException, NoValidTokensFoundException, InvalidTokenException, AdminPrivilegesRequiredException, AlreadyLoggedInException, AuthRequiredException
-)
+from pydantic import BaseModel
+from config.settings import Settings
+from src.infrastructure.s3.s3_client_factory import s3_client_maker
+from src.application.repositories.S3Repository import S3Repository
+from src.presentation.api.auth_service.utils import create_access_token, decode_jwt
+#from src.presentation.api.routers import apply_routers
 import uvicorn
-from src.core.exceptions.exceptions import DatabaseDataException, DatabaseConfigurationException, DatabaseException, DatabaseIntegrityException, DatabaseOperationalException, S3ClientException, S3ConnectionException, S3Exception, S3NoCredentialsException, S3ParameterValidationException
-from src.entities.entities import TokenPayload
-from src.utils.UnitOfWork import SQLAlchemyUoW
+from src.core.entities.entities import TokenPayload
 from src.utils.logger import logger
 from starlette.middleware.base import BaseHTTPMiddleware
-from src.presentation.dependencies import get_sqla_uow, SqlUoWDep
+from src.presentation.dependencies import UoWDep, ElasticDep, get_uow
 from contextlib import asynccontextmanager
 from redis.asyncio import Redis
 from config.settings import Settings
 from src.presentation.dependencies import RedisDep
+from elasticsearch import AsyncElasticsearch
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DataError, OperationalError
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 	app.state.redis = Redis(host=Settings.redis_host, port=Settings.redis_port, db=0)
+	app.state.elastic = AsyncElasticsearch(hosts=[Settings.elastic_url], basic_auth=(Settings.elastic_user, Settings.elastic_password), verify_certs=False, headers={
+            "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8"
+        })
 	s3_client = await s3_client_maker()
 	app.state.s3_repository = S3Repository(s3_client)
 	yield
 	await app.state.redis.close()
 	await s3_client.close()
+	await app.state.elastic.close() 
 
 
-app = FastAPI(title='Laptop API', lifespan=lifespan, dependencies=[SqlUoWDep, RedisDep])
-apply_routers(app)
+app = FastAPI(title='Laptop API', lifespan=lifespan)
+#apply_routers(app)
 
 from botocore.exceptions import ClientError
 
 @app.middleware("http")
-async def s3_error_middleware(request: Request, call_next: Callable | Awaitalbe) -> Response:
+async def s3_error_middleware(request: Request, call_next: Callable | Awaitable) -> Response:
     try:
         return await call_next(request)
     except ClientError as e:
@@ -125,7 +129,7 @@ async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError):
 # ------------ App ------------
 
 
-PUBLIC_PATHS = {"/", "/docs", "/openapi.json", "/redoc"}
+PUBLIC_PATHS = {"/", "/docs", "/openapi.json", "/redoc", '/documents/data', "/search/data"}
 ADMIN_PATHS = {"/auth/admin/test"}
 UNAUTHENTICATED_ONLY_PATHS = {"/auth/login/admin", "/auth/login/user", "/auth/register"}
 AUTHENTICATED_ONLY_PATHS = {"/auth/logout", "/auth/users/me" "/account/self", "/account/self/update", "/account/delete", "/account/activity", "/account/laptops"}
@@ -215,7 +219,7 @@ async def auth_middleware(
                 payload = decode_jwt(refresh_token)
                 user_id = payload.get('sub')
 
-                uow = get_sqla_uow()
+                uow = get_uow()
                 async with uow:
                     user = await uow.users.get_by_id(user_id)
                     if user:
@@ -223,7 +227,10 @@ async def auth_middleware(
                         current_payload = decode_jwt(new_access_token)
                         logger.info(f"Access token refreshed for user {current_payload.get('sub')}.")
                     else:
-                        raise UserNotFoundException('User not found to refresh access token')
+                        return JSONResponse(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    content={"detail": 'User not found'}
+                           )
             except InvalidTokenError as e:
                 logger.warning(f"Failed to refresh token. Clearing tokens.")
                 response.delete_cookie(key="Bearer-token")
@@ -264,7 +271,7 @@ async def auth_middleware(
             httponly=True,
             samesite="lax",
             # secure=True, # Uncomment in production with HTTPS
-            max_age=SAppSettings.access_token_expire_minutes * 60
+            max_age=Settings.access_token_expire_minutes * 60
         )
         logger.debug("New access token set in response cookie.")
 
@@ -280,11 +287,52 @@ def healthcheck():
     return {'Status': 'healthy'}
 
 @app.get('/error', tags=['Troubleshoot'])
-def error():
+def error(es: ElasticDep):
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
         detail='This is an autoerror endpoint'
 	 )
+
+class Document(BaseModel):
+    data: Dict[str, Any]
+
+@app.post("/documents/{index_name}")
+async def add_document(
+    index_name: str,
+    doc: Document,
+    es: ElasticDep
+):
+    try:
+        resp = await es.index(index=index_name, document=doc.data)
+        return {"result": resp["result"], "id": resp["_id"]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Поиск по индексу с опциональным query (по умолчанию match_all)
+@app.get("/search/{index_name}")
+async def search_documents(
+    es: ElasticDep,
+    index_name: str,
+    query: Optional[str] = None,
+):
+    body = {"query": {"match_all": {}}}
+    if query:
+        # простой поиск по всем полям с текстом query
+        body = {
+            "query": {
+                "multi_match": {
+                    "query": query,
+                    "fields": ["*"]
+                }
+            }
+        }
+    try:
+        resp = await es.search(index=index_name, body=body)
+        hits = resp["hits"]["hits"]
+        # возвращаем найденные документы с id и source
+        return [{"id": hit["_id"], **hit["_source"]} for hit in hits]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == '__main__':

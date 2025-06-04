@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 import uuid
 import jwt
 import bcrypt
-from src.entities.entities import User
+from src.core.entities.entities import User
 from config.settings import Settings
 
 ACCESS_TOKEN_TYPE = 'access'

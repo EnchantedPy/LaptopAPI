@@ -1,6 +1,6 @@
 from fastapi import HTTPException, Request, Response, status, APIRouter
 
-from src.core.auth_service.utils import (
+from src.presentation.api.auth_service.utils import (
 	create_access_token,
 	create_refresh_token,
 	validate_password,
@@ -10,11 +10,10 @@ from src.core.auth_service.utils import (
    create_admin_refresh_token
 )
 
-from src.schemas.schemas import AdminLoginSchema, UserAddSchema, UserLoginSchema
-from src.services.UserService import UserService
-from src.core.dependencies.dependencies import SqlUoWDep
+from src.presentation.dto.schemas import AdminLoginSchema, UserAddSchema, UserLoginSchema
+from src.application.services.UserService import UserService
+from src.presentation.dependencies import UoWDep
 from src.utils.logger import logger
-from src.services.UserService import UserService
 from config.settings import Settings
 
 AuthRouter = APIRouter(prefix='/auth', tags=['Auth'])
@@ -29,13 +28,13 @@ AuthRouter = APIRouter(prefix='/auth', tags=['Auth'])
 
 
 @AuthRouter.post('/register')
-async def register(data: UserAddSchema, uow: SqlUoWDep):
+async def register(data: UserAddSchema, uow: UoWDep):
 	await UserService().add(uow, data)
 	return {'status': 'success'}
 
 
 @AuthRouter.post('/login/user')
-async def login_user(data: UserLoginSchema, uow: SqlUoWDep, response: Response):
+async def login_user(data: UserLoginSchema, uow: UoWDep, response: Response):
 	user = await UserService().get_by_username(uow, data.username)
 	if not validate_password(data.password, user.hashed_password):
 		raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Incorrect credentials')

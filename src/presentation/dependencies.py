@@ -1,8 +1,13 @@
 from fastapi import Depends
 from typing import Annotated
-from src.utils.UnitOfWork import SQLAlchemyUoWInterface, SQLAlchemyUoW
+from src.application.repositories.S3Repository import S3Repository
+from src.utils.UnitOfWork import IUnitOfWork, UnitOfWork
 from redis.asyncio import Redis
 from fastapi import Request
+from elasticsearch import AsyncElasticsearch
+
+def get_elastic(request: Request) -> AsyncElasticsearch:
+	return request.app.state.elastic
 
 def get_s3_repository(request: Request) -> S3Repository:
     return request.app.state.s3_repository
@@ -10,11 +15,13 @@ def get_s3_repository(request: Request) -> S3Repository:
 async def get_redis(request: Request) -> Redis:
     return request.app.state.redis
 
-def get_sqla_uow() -> SQLAlchemyUoW:
-	return SQLAlchemyUoW()
+def get_uow() -> UnitOfWork:
+	return UnitOfWork()
 
-SqlUoWDep = Annotated[ISQLAlchemyUoW, Depends(get_sqla_uow)]
+UoWDep = Annotated[IUnitOfWork, Depends(get_uow)]
 
 RedisDep = Annotated[Redis, Depends(get_redis)]
 
 S3Dep = Annotated[S3Repository, Depends(get_s3_repository)]
+
+ElasticDep = Annotated[AsyncElasticsearch, Depends(get_elastic)]

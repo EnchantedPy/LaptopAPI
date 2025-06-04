@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from src.core.account_service.router import AccountRouter
-from src.core.auth_service.router import AuthRouter
+from src.presentation.api.account_service.router import AccountRouter
+from src.presentation.api.auth_service.router import AuthRouter
 
 routers = [AccountRouter, AuthRouter]
 

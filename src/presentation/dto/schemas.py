@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, EmailStr, model_validator
 
@@ -46,16 +45,6 @@ class LaptopUpdateSchema(BaseModel):
 	max_price: Optional[int] = None
 
 
-
-'''Activity schemas'''
-
-class ActivityAddInternalSchema(BaseModel):
-	user_id: int
-	detail: str
-	timestamp: datetime
-
-
-
 '''Auth schemas'''
 
 class LoginSchema(BaseModel):
@@ -97,18 +86,18 @@ class LaptopChangeSchema(BaseModel):
 
 '''...............'''
 
-RegisterRequestSchema(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
+class RegisterRequestSchema(BaseModel):
+	username: str
+	email: EmailStr
+	password: str
 
-UserUpdateSchema(BaseModel):
-    id: int
-    username: Optional[str] = None
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
+class UserUpdateSchema(BaseModel):
+	id: int
+	username: Optional[str] = None
+	email: Optional[EmailStr] = None
+	password: Optional[str] = None
 
-UserResponseDto(BaseModel):
+class UserResponseDto(BaseModel):
 	id: int
 	username: str
 	email: EmailStr

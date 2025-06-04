@@ -21,4 +21,3 @@ class s3_clientmaker:
 		 return self.get_client()
 
 s3_client_maker = s3_clientmaker(Settings.s3_config, Settings.s3_bucket_name)
-s3_client_maker()
