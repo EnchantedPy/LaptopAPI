@@ -112,3 +112,5 @@
 2025-06-04 11:28:26	Logger	DEBUG	main.py:172	Path /openapi.json is public. Skipping authentication.
 2025-06-04 11:58:27	Logger	DEBUG	main.py:172	Path /docs is public. Skipping authentication.
 2025-06-04 11:58:28	Logger	DEBUG	main.py:172	Path /openapi.json is public. Skipping authentication.
+2025-06-05 07:10:48	logger	DEBUG	main.py:172	Path /docs is public. Skipping authentication.
+2025-06-05 07:10:48	logger	DEBUG	main.py:172	Path /openapi.json is public. Skipping authentication.

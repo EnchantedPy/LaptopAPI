@@ -1,0 +1,41 @@
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  standard:
+    format: "%(asctime)s\t%(name)s\t%(levelname)s\t%(filename)s:%(lineno)d\t%(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+  file_app:
+    class: logging.handlers.RotatingFileHandler
+    formatter: standard
+    filename: logs/app.log
+    maxBytes: 10485760
+    backupCount: 5
+    encoding: utf-8
+  file_tests:
+    class: logging.handlers.RotatingFileHandler
+    formatter: standard
+    filename: logs/tests.log
+    maxBytes: 10485760
+    backupCount: 5
+    encoding: utf-8
+  console:
+    class: logging.StreamHandler
+    formatter: standard
+    stream: ext://sys.stdout
+
+loggers:
+  logger:
+    handlers: [file_app, console]
+    level: DEBUG
+    propagate: False
+  test_logger:
+    handlers: [file_tests, console]
+    level: DEBUG
+    propagate: False
+
+root:
+  handlers: [console]
+  level: INFO
