@@ -11,6 +11,7 @@ class AppSettings(BaseSettings):
     rmq_port: int = Field(..., env='rmq_port')
     rmq_user: str = Field(..., env='rmq_user')
     rmq_password: str = Field(..., env='rmq_password')
+    rmq_exchange: str = Field(..., env="rmq_exchange")
     
     @property
     def rmq_url(self) -> str:
@@ -114,6 +115,7 @@ class TestAppSettings(BaseSettings):
             f"postgresql+psycopg2://{self.test_pg_user}:{self.test_pg_password}"
             f"@{self.test_pg_host}:{self.test_pg_port}/{self.test_pg_db}"
         )
+    
 
 def get_test_settings() -> TestAppSettings:
     return TestAppSettings()

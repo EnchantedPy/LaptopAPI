@@ -24,16 +24,11 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DataError, Operation
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 	app.state.redis = Redis(host=Settings.redis_host, port=Settings.redis_port, db=0)
-	app.state.elastic = AsyncElasticsearch(hosts=[Settings.elastic_url], basic_auth=(Settings.elastic_user, Settings.elastic_password), verify_certs=False, headers={
-            "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
-            "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8"
-        })
 	s3_client = await s3_client_maker()
 	app.state.s3_repository = S3Repository(s3_client)
 	yield
 	await app.state.redis.close()
 	await s3_client.close()
-	await app.state.elastic.close() 
 
 
 app = FastAPI(title='Laptop API', lifespan=lifespan)
@@ -41,18 +36,18 @@ app = FastAPI(title='Laptop API', lifespan=lifespan)
 
 from botocore.exceptions import ClientError
 
-@app.middleware("http")
-async def s3_error_middleware(request: Request, call_next: Callable | Awaitable) -> Response:
-    try:
-        return await call_next(request)
-    except ClientError as e:
-        status_code = 500
-        if e.response['Error']['Code'] == 'NoSuchKey':
-            status_code = 404
-        raise HTTPException(
-            status_code=status_code,
-            detail=e.response['Error']['Message']
-        )
+# @app.middleware("http")
+# async def s3_error_middleware(request: Request, call_next: Callable | Awaitable) -> Response:
+#     try:
+#         return await call_next(request)
+#     except ClientError as e:
+#         status_code = 500
+#         if e.response['Error']['Code'] == 'NoSuchKey':
+#             status_code = 404
+#         raise HTTPException(
+#             status_code=status_code,
+#             detail=e.response['Error']['Message']
+#         )
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
@@ -129,7 +124,7 @@ async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError):
 # ------------ App ------------
 
 
-PUBLIC_PATHS = {"/", "/docs", "/openapi.json", "/redoc", '/documents/data', "/search/data"}
+PUBLIC_PATHS = {"/", "/docs", "/openapi.json", "/redoc", '/documents/data', "/search/data", "/rmq_send", "/rmq_consume"}
 ADMIN_PATHS = {"/auth/admin/test"}
 UNAUTHENTICATED_ONLY_PATHS = {"/auth/login/admin", "/auth/login/user", "/auth/register"}
 AUTHENTICATED_ONLY_PATHS = {"/auth/logout", "/auth/users/me" "/account/self", "/account/self/update", "/account/delete", "/account/activity", "/account/laptops"}
@@ -293,6 +288,17 @@ def error(es: ElasticDep):
         detail='This is an autoerror endpoint'
 	 )
 
+@app.get('/rmq_send')
+async def send():
+    from src.infrastructure.rabbitmq.publisher import RabbitMQPublisher
+    await RabbitMQPublisher().send_message('Elastic-queue', {'status': 'success'})
+    return {'status': 'success'}
+
+@app.get('/rmq_consume')
+async def consume():
+    from src.infrastructure.rabbitmq.consumer import RabbitMQConsumer
+    await RabbitMQConsumer().consume_messages('Elastic-queue')
+
 class Document(BaseModel):
     data: Dict[str, Any]
 
@@ -308,7 +314,6 @@ async def add_document(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Поиск по индексу с опциональным query (по умолчанию match_all)
 @app.get("/search/{index_name}")
 async def search_documents(
     es: ElasticDep,
@@ -317,7 +322,6 @@ async def search_documents(
 ):
     body = {"query": {"match_all": {}}}
     if query:
-        # простой поиск по всем полям с текстом query
         body = {
             "query": {
                 "multi_match": {
